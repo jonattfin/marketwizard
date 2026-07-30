@@ -105,14 +105,8 @@ function getRightItems() {
       value: "tree-maps",
       icon: <LuFolderSearch/>,
       title: "Map",
-      content: <>&nbsp;</>
+      content: <MarketTreemap height={300}/>
     },
-    // {
-    //   value: "tree-maps",
-    //   icon: <LuFolderSearch/>,
-    //   title: "Map",
-    //   content: <MarketTreemap height={300}/>
-    // },
-    // {value: "bloomberg-news", icon: <LuNewspaper/>, title: "Bloomberg news", content: <YoutubeVideo/>},
+    {value: "bloomberg-news", icon: <LuNewspaper/>, title: "Bloomberg news", content: <YoutubeVideo/>},
   ]
 }
