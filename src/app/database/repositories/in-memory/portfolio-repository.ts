@@ -10,21 +10,21 @@ export class PortfolioRepository implements IPortfolioRepository {
   private readonly portfolios = createPortfolios();
   private readonly lazyPortfolios = createLazyPortfolios();
 
-  fetchLazyPortfolioById(id: number): Promise<LazyPortfolioType | undefined> {
-    return Promise.resolve(this.lazyPortfolios.find(p => p.id === id));
+  async fetchLazyPortfolioById(id: number): Promise<LazyPortfolioType | undefined> {
+    return this.lazyPortfolios.find(p => p.id === id);
   }
 
-  fetchLazyPortfolios(pageNumber: number = 1, pageSize: number = 5): Promise<[number, LazyPortfolioType[]]> {
+  async fetchLazyPortfolios(pageNumber: number = 1, pageSize: number = 5): Promise<[number, LazyPortfolioType[]]> {
     const values = this.lazyPortfolios;
 
-    return Promise.resolve([
+    return [
       values.length,
       values.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
-    ]);
+    ];
   }
 
-  fetchPortfoliosPerformance(): Promise<PortfolioPerformanceType[]> {
-    const values = this.portfolios.map(p => {
+  async fetchPortfoliosPerformance(): Promise<PortfolioPerformanceType[]> {
+    return this.portfolios.map(p => {
       return {
         id: p.id,
         portfolioName: p.name,
@@ -32,18 +32,14 @@ export class PortfolioRepository implements IPortfolioRepository {
         "1y": random(-1, 1)
       }
     })
-
-    return Promise.resolve(values);
   }
 
-  fetchPortfolioById(id: string): Promise<PortfolioType | undefined> {
-    const portfolio = this.portfolios.find((p) => p.id === id)
-
-    return Promise.resolve(portfolio);
+  async fetchPortfolioById(id: string): Promise<PortfolioType | undefined> {
+    return this.portfolios.find((p) => p.id === id)
   }
 
-  fetchPortfolios(): Promise<PortfolioType[]> {
-    const values = this.portfolios.map(({name, id}) => ({
+  async fetchPortfolios(): Promise<PortfolioType[]> {
+    return this.portfolios.map(({name, id}) => ({
       id,
       name: name,
       description: lorem.generateSentences(2),
@@ -53,11 +49,9 @@ export class PortfolioRepository implements IPortfolioRepository {
       holdings: 3,
       assets: []
     }));
-
-    return Promise.resolve(values);
   }
 
-  fetchPortfoliosArea(portfolioId?: string): Promise<PortfoliosAreaType> {
+  async fetchPortfoliosArea(portfolioId?: string): Promise<PortfoliosAreaType> {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     let filteredPortfolios = this.portfolios;
@@ -77,11 +71,10 @@ export class PortfolioRepository implements IPortfolioRepository {
       }
     })
 
-    return Promise.resolve({
+    return {
       portfolios: filteredPortfolios.map(p => p.name),
       performance
-    });
-
+    };
   }
 }
 

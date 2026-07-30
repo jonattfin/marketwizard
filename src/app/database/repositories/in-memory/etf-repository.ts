@@ -7,14 +7,14 @@ const lorem = new LoremIpsum();
 export class EtfRepository implements IEtfRepository {
   private readonly etfThemes = createEtfThemes();
 
-  fetchEtfById(id: string): Promise<EtfThemeByIdType | undefined> {
+  async fetchEtfById(id: string): Promise<EtfThemeByIdType | undefined> {
     const theme = this.etfThemes.find(t => t.theme === id);
 
-    return Promise.resolve(createEtfByIdType(theme?.name, theme?.imageUrl, theme?.description));
+    return createEtfByIdType(theme?.name, theme?.imageUrl, theme?.description);
   }
 
-  fetchEtfs(): Promise<EtfThemeType[]> {
-    return Promise.resolve(this.etfThemes);
+  async fetchEtfs(): Promise<EtfThemeType[]> {
+    return this.etfThemes;
   }
 }
 

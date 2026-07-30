@@ -10,11 +10,11 @@ import {take} from "es-toolkit";
 import dayjs from "dayjs";
 
 export class MiscRepository implements IMiscRepository {
-  fetchGainers(countries: string[], period?: string): Promise<GainersDataType> {
-    return Promise.resolve({
+  async fetchGainers(countries: string[], period?: string): Promise<GainersDataType> {
+    return {
       items: [],
       date: new Date(),
-    });
+    };
   }
 
   async fetchIndicesPerformance(): Promise<IndicePerformanceDataType> {
@@ -51,23 +51,22 @@ export class MiscRepository implements IMiscRepository {
     }
   }
 
-  fetchLosers(countries: string[], period?: string): Promise<LosersDataType> {
-    return Promise.resolve({
+  async fetchLosers(countries: string[], period?: string): Promise<LosersDataType> {
+    return {
       items: [],
       date: dayjs().toDate()
-    });
+    };
   }
 
-  fetchMapPerformance(): Promise<TreeMapType[]> {
-    return Promise.resolve([]);
+  async fetchMapPerformance(): Promise<TreeMapType[]> {
+    return [];
   }
 
-  fetchSectorPerformance(countries: string[]): Promise<SectorPerformanceDataType> {
-    return Promise.resolve({
+  async fetchSectorPerformance(countries: string[]): Promise<SectorPerformanceDataType> {
+    return {
         items: [],
         date: new Date()
-      }
-    );
+      };
   }
 
   async fetchTopNews(countries: string[]): Promise<TopNewsDataType> {
@@ -93,19 +92,19 @@ export class MiscRepository implements IMiscRepository {
     }
   }
 
-  fetchTopIndustries(countries: string[], period: string): Promise<TopIndustriesDataType> {
-    return Promise.resolve({
+  async fetchTopIndustries(countries: string[], period: string): Promise<TopIndustriesDataType> {
+    return {
       items: [],
       date: dayjs().toDate()
-    });
+    };
   }
 
 
-  fetchWorstIndustries(countries: string[], period: string): Promise<WorstIndustriesDataType> {
-    return Promise.resolve({
+  async fetchWorstIndustries(countries: string[], period: string): Promise<WorstIndustriesDataType> {
+    return {
       items: [],
       date: dayjs().toDate()
-    });
+    };
   }
 
 }

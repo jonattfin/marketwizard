@@ -16,7 +16,7 @@ const lorem = new LoremIpsum();
 export class MiscRepository implements IMiscRepository {
   private readonly etfs = createEtfs();
 
-  fetchTopNews(countries: string[]): Promise<TopNewsDataType> {
+  async fetchTopNews(countries: string[]): Promise<TopNewsDataType> {
     let country = "N/A";
     if (countries.length > 0) {
       country = countries[randomInt(0, countries.length)];
@@ -34,10 +34,10 @@ export class MiscRepository implements IMiscRepository {
       }
     })
 
-    return Promise.resolve({items, date: dayjs().toDate()});
+    return {items, date: dayjs().toDate()};
   }
 
-  fetchIndicesPerformance(): Promise<IndicePerformanceDataType> {
+  async fetchIndicesPerformance(): Promise<IndicePerformanceDataType> {
     const values = [
       {id: 1, name: "S&P 500", ytdPerformance: 0.12, points: 6880, countryCode: "USA"},
       {id: 2, name: "Nikkei 225", ytdPerformance: 0.14, points: 43274, countryCode: "JPN"},
@@ -52,13 +52,13 @@ export class MiscRepository implements IMiscRepository {
       {id: 10, name: "KOSPI", ytdPerformance: 0.06, points: 2760, countryCode: "KOR"},
     ];
 
-    return Promise.resolve({
+    return {
       items: values,
       date: dayjs().toDate()
-    });
+    };
   }
 
-  fetchSectorPerformance(countries: string[]): Promise<SectorPerformanceDataType> {
+  async fetchSectorPerformance(countries: string[]): Promise<SectorPerformanceDataType> {
     let country = "N/A";
     if (countries.length > 0) {
       country = countries[randomInt(0, countries.length)];
@@ -70,14 +70,14 @@ export class MiscRepository implements IMiscRepository {
       country: country
     }));
 
-    return Promise.resolve({
+    return {
       items: values,
       date: dayjs().toDate()
-    });
+    };
   }
 
-  fetchWorldEquity(): Promise<EquityType[]> {
-    const values = Object.values(CountryType).map(type => {
+  async fetchWorldEquity(): Promise<EquityType[]> {
+    return Object.values(CountryType).map(type => {
       return {
         country: type,
         change: random(-0.3, 0.3),
@@ -86,7 +86,6 @@ export class MiscRepository implements IMiscRepository {
       };
     });
 
-    return Promise.resolve(values);
   }
 
   fetchMapPerformance(): Promise<TreeMapType[]> {
@@ -94,7 +93,7 @@ export class MiscRepository implements IMiscRepository {
   }
 
 
-  fetchTopIndustries(countries: string[], period: string): Promise<TopIndustriesDataType> {
+  async fetchTopIndustries(countries: string[], period: string): Promise<TopIndustriesDataType> {
     const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
@@ -109,13 +108,13 @@ export class MiscRepository implements IMiscRepository {
       }
     });
 
-    return Promise.resolve({
+    return {
       items: take(orderBy(values, ['change'], ['asc']), 5),
       date: dayjs().toDate()
-    });
+    };
   }
 
-  fetchWorstIndustries(countries: string[], period: string): Promise<WorstIndustriesDataType> {
+  async fetchWorstIndustries(countries: string[], period: string): Promise<WorstIndustriesDataType> {
     const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
@@ -130,13 +129,13 @@ export class MiscRepository implements IMiscRepository {
       }
     });
 
-    return Promise.resolve({
+    return {
       items: take(orderBy(values, ['change'], ['asc']), 5),
       date: dayjs().toDate()
-    });
+    };
   }
 
-  fetchGainers(countries: string[], period?: string): Promise<GainersDataType> {
+  async fetchGainers(countries: string[], period?: string): Promise<GainersDataType> {
     const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
@@ -157,13 +156,13 @@ export class MiscRepository implements IMiscRepository {
       return take(orderBy(values, ['change'], ['desc']), 5);
     }
 
-    return Promise.resolve({
+    return {
       items: buildGainers(),
       date: dayjs().toDate()
-    })
+    }
   }
 
-  fetchLosers(countries: string[], period?: string): Promise<LosersDataType> {
+  async fetchLosers(countries: string[], period?: string): Promise<LosersDataType> {
     const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
@@ -184,10 +183,10 @@ export class MiscRepository implements IMiscRepository {
       return take(orderBy(values, ['change'], ['asc']), 5)
     }
 
-    return Promise.resolve({
+    return {
       items: buildLosers(),
       date: dayjs().toDate()
-    })
+    }
   }
 
 }
