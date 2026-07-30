@@ -40,7 +40,7 @@ export class MiscRepository implements IMiscRepository {
     }
 
     return {
-      items: data.body.map((item, i) => ({
+      items: data?.body?.map((item, i) => ({
         id: i,
         name: indices[i]?.name,
         ytdPerformance: 0,
@@ -70,8 +70,11 @@ export class MiscRepository implements IMiscRepository {
   }
 
   async fetchTopNews(countries: string[]): Promise<TopNewsDataType> {
-    const url = getYahooFinanceUrl("v2/markets/news");
+    const url = getYahooFinanceUrl("v1/markets/news");
     const data = await fetchTyped<YahooFinanceNews>(url);
+
+    console.log("top news", data)
+
     if (!data) {
       return {
         items: []
@@ -79,7 +82,7 @@ export class MiscRepository implements IMiscRepository {
     }
 
     return {
-      items: take(data.body, 10).map((item, i) => ({
+      items: take(data?.body || [], 10).map((item, i) => ({
         id: i,
         text: item.title,
         source: item.source,

@@ -24,7 +24,7 @@ export const IndicesTable = ({data, countries, onCountryChanged}: Readonly<Indic
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {data?.items.map((item) => (
+          {data?.items?.map((item) => (
             <Table.Row key={item.id}>
               <Table.Cell>
                 {item.name}

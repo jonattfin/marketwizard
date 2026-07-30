@@ -35,7 +35,7 @@ const IndicesPerformance = ({onCountryChanged}: IndicesPerformanceType) => {
 	const countries = useContext(CountryContext);
 
 	const selectedIndices = useMemo(() => {
-		return data?.items.filter(d =>
+		return data?.items?.filter(d =>
 			countries.includes(d.countryCode)).map(item => ({id: item.countryCode, value: item.points}))
 	}, [countries, data]);
 

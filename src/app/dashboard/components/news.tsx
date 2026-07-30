@@ -48,7 +48,7 @@ const News = () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {data?.items.map((item, index) => (
+          {data?.items?.map((item, index) => (
             <Table.Row key={item.id}>
               <Table.Cell>
                 {`${index + 1}. ${item.text}`}

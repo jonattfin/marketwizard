@@ -21,6 +21,9 @@ export class MiscRepository implements IMiscRepository {
       const response = await this.db.select({
         indice_performance: cronJobsTable.indice_performance
       }).from(cronJobsTable).where(eq(cronJobsTable.id, 1));
+
+      console.log("Response", response);
+
       return response?.[0]?.indice_performance as IndicePerformanceDataType;
     } catch (e) {
       console.error(e);

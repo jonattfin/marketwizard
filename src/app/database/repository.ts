@@ -10,8 +10,7 @@ import {UpdateMiscRepository} from "@/app/database/repositories/real/update-misc
 
 class Factory {
   isDev() {
-    return true;
-    // process.env.NODE_ENV !== 'production';
+    return process.env.NODE_ENV !== 'production';
   }
 
   createMiscRepository() {

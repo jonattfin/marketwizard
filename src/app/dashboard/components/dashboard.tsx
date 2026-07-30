@@ -101,12 +101,12 @@ function getLeftItems() {
 
 function getRightItems() {
   return [
-    {
-      value: "tree-maps",
-      icon: <LuFolderSearch/>,
-      title: "Map",
-      content: <MarketTreemap height={300}/>
-    },
+    // {
+    //   value: "tree-maps",
+    //   icon: <LuFolderSearch/>,
+    //   title: "Map",
+    //   content: <MarketTreemap height={300}/>
+    // },
     {value: "bloomberg-news", icon: <LuNewspaper/>, title: "Bloomberg news", content: <YoutubeVideo/>},
   ]
 }
