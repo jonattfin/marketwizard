@@ -22,9 +22,7 @@ export class MiscRepository implements IMiscRepository {
         indice_performance: cronJobsTable.indice_performance
       }).from(cronJobsTable).where(eq(cronJobsTable.id, 1));
 
-      console.log("Response", response);
-
-      return response?.[0]?.indice_performance as IndicePerformanceDataType;
+      return JSON.parse(response?.[0]?.indice_performance as string) as IndicePerformanceDataType;
     } catch (e) {
       console.error(e);
       return {
@@ -42,7 +40,7 @@ export class MiscRepository implements IMiscRepository {
       const response = await this.db.select({
         sector_performance: cronJobsTable.sector_performance
       }).from(cronJobsTable).where(eq(cronJobsTable.id, 1));
-      return response?.[0]?.sector_performance as SectorPerformanceDataType;
+      return JSON.parse(response?.[0]?.sector_performance as string) as SectorPerformanceDataType;
     } catch (e) {
       console.error(e);
       return {
@@ -56,7 +54,7 @@ export class MiscRepository implements IMiscRepository {
       const response = await this.db.select({
         top_industries: cronJobsTable.top_industries
       }).from(cronJobsTable).where(eq(cronJobsTable.id, 1));
-      return response?.[0]?.top_industries as TopIndustriesDataType;
+      return JSON.parse(response?.[0]?.top_industries as string) as TopIndustriesDataType;
     } catch (e) {
       console.error(e);
       return {
@@ -70,7 +68,7 @@ export class MiscRepository implements IMiscRepository {
       const response = await this.db.select({
         top_news: cronJobsTable.top_news
       }).from(cronJobsTable).where(eq(cronJobsTable.id, 1));
-      return response?.[0]?.top_news as TopNewsDataType;
+      return JSON.parse(response?.[0]?.top_news as string) as TopNewsDataType;
     } catch (e) {
       console.error(e);
       return {
@@ -84,7 +82,7 @@ export class MiscRepository implements IMiscRepository {
       const response = await this.db.select({
         worst_industries: cronJobsTable.worst_industries
       }).from(cronJobsTable).where(eq(cronJobsTable.id, 1));
-      return response?.[0]?.worst_industries as WorstIndustriesDataType;
+      return JSON.parse(response?.[0]?.worst_industries as string) as WorstIndustriesDataType;
     } catch (e) {
       console.error(e);
       return {
@@ -98,7 +96,7 @@ export class MiscRepository implements IMiscRepository {
       const response = await this.db.select({
         gainers: cronJobsTable.gainers
       }).from(cronJobsTable).where(eq(cronJobsTable.id, 1));
-      return response?.[0]?.gainers as GainersDataType;
+      return JSON.parse(response?.[0]?.gainers as string) as GainersDataType;
     } catch (e) {
       console.error(e);
       return {
@@ -112,7 +110,7 @@ export class MiscRepository implements IMiscRepository {
       const response = await this.db.select({
         losers: cronJobsTable.losers
       }).from(cronJobsTable).where(eq(cronJobsTable.id, 1));
-      return response?.[0]?.losers as LosersDataType;
+      return JSON.parse(response?.[0]?.losers as string) as LosersDataType;
     } catch (e) {
       console.error(e);
       return {

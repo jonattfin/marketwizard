@@ -4,6 +4,7 @@ import {ResponsiveChoropleth} from '@nivo/geo'
 
 import countries from './data/world-countries.json';
 import {useNivoTheme} from "@/shared/nivoTheme";
+import {useEffect} from "react";
 
 type WorldMapType = {
   id: string;

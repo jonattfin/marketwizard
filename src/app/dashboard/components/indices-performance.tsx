@@ -5,7 +5,7 @@ import {Grid, GridItem} from "@chakra-ui/react";
 import {useQuery} from "@tanstack/react-query";
 import {IndicePerformanceDataType} from "@/shared/types";
 
-import React, {Suspense, useContext, useMemo} from "react";
+import React, {Suspense, useContext, useEffect, useMemo} from "react";
 import {CountryContext} from "@/shared/context/country-context";
 import {IndicesTable} from "@/shared/indices-table";
 
@@ -34,13 +34,13 @@ const IndicesPerformance = ({onCountryChanged}: IndicesPerformanceType) => {
 	const {isPending, error, data} = useIndicesPerformance();
 	const countries = useContext(CountryContext);
 
-	const selectedIndices = useMemo(() => {
-		return data?.items?.filter(d =>
-			countries.includes(d.countryCode)).map(item => ({id: item.countryCode, value: item.points}))
-	}, [countries, data]);
-
 	if (isPending) return <Loading/>;
 	if (error) return `Page ${error}`;
+
+	const selectedIndices = data?.items?.filter(item => countries.includes(item.countryCode))
+		.map(item => {
+			return {id: item.countryCode, value: item.points};
+		})
 
 	return (
 		<Grid templateColumns={{

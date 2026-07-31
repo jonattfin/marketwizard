@@ -8,33 +8,54 @@ import {MiscRepository as RapidApiMiscRepository} from "@/app/database/repositor
 
 import {UpdateMiscRepository} from "@/app/database/repositories/real/update-misc-repository";
 
-class Factory {
-  isDev() {
-    return process.env.NODE_ENV !== 'production';
-  }
-
-  createMiscRepository() {
-    return this.isDev() ? new MiscRepository() : new RealMiscRepository();
-  }
-
-  createPortfolioRepository() {
-    return new PortfolioRepository();
-  }
-
-  createEtfRepository() {
-    return new EtfRepository();
-  }
-
-  createWatchlistRepository() {
-    return new WatchlistRepository();
-  }
-
-  createUpdateMiscRepository() {
-    return new UpdateMiscRepository(new MiscRepository(), new RapidApiMiscRepository());
-  }
+enum Environment {
+	Development = 'development',
+	Production = 'production',
 }
 
-const factory = new Factory();
+class EnvironmentFactory {
+	getEnvironment(): Environment {
+		if (process.env.NODE_ENV === 'development') {
+			return Environment.Development;
+		} else if (process.env.NODE_ENV === 'production') {
+			return Environment.Production;
+		}
+
+		return Environment.Development;
+	}
+}
+
+class Factory {
+	private readonly envFactory: EnvironmentFactory;
+
+	constructor(envFactory: EnvironmentFactory) {
+		this.envFactory = envFactory;
+	}
+
+	createMiscRepository() {
+		return this.envFactory.getEnvironment() === Environment.Development
+			? new MiscRepository() : new RealMiscRepository();
+	}
+
+	createPortfolioRepository() {
+		return new PortfolioRepository();
+	}
+
+	createEtfRepository() {
+		return new EtfRepository();
+	}
+
+	createWatchlistRepository() {
+		return new WatchlistRepository();
+	}
+
+	createUpdateMiscRepository() {
+		return new UpdateMiscRepository(new MiscRepository(), new RapidApiMiscRepository());
+	}
+}
+
+const envFactory = new EnvironmentFactory();
+const factory = new Factory(envFactory);
 
 export const miscRepository = factory.createMiscRepository();
 export const updateMiscRepository = factory.createUpdateMiscRepository();
