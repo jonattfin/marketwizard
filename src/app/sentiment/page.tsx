@@ -1,6 +1,6 @@
 import {Link, Stack, Text, Blockquote, Grid, GridItem, Badge, Flex, StackSeparator, Breadcrumb} from "@chakra-ui/react"
-import LineChart from "@/app/sentiment/components/lineChart";
-import LineChart2 from "@/app/sentiment/components/lineChart2";
+import LineChart3 from "@/app/sentiment/components/lineChart3";
+
 import {JSX, useMemo} from "react";
 import {Metadata} from "next";
 
@@ -127,7 +127,7 @@ function createItems(): ItemType[] {
       id: 1,
       title: "Market Momentum",
       subtitle: "S&P 500 and its 125-day moving average",
-      chart: <LineChart/>,
+      chart: <LineChart3/>,
       sentiment: "Fear",
       text: `
     It’s useful to look at stock market levels compared to where they’ve been over the past few months. 
@@ -140,7 +140,7 @@ function createItems(): ItemType[] {
       id: 2,
       title: "Stock price strength",
       subtitle: "Net new 52-week highs and lows on the NYSE",
-      chart: <LineChart2/>,
+      chart: <LineChart3/>,
       sentiment: "Extreme fear",
       text: `
     A few big stocks can skew returns for the market. 
@@ -153,7 +153,7 @@ function createItems(): ItemType[] {
       id: 3,
       title: "Stock price breath",
       subtitle: "McClellan Volume Summation Index",
-      chart: <LineChart2/>,
+      chart: <LineChart3/>,
       sentiment: "Extreme fear",
       text: `
     The market is made up of thousands of stocks. And on any given day, investors are actively buying and selling them. 

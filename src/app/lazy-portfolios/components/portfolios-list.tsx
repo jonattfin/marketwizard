@@ -32,7 +32,7 @@ const useLazyPortfolios = (pageNumber: number, pageSize: number) => {
 export default function LazyPortfoliosList() {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
-  const [checked, setChecked] = useState(false)
+  const [view, setView] = useState(true)
 
   const {isPending, error, data} = useLazyPortfolios(pageNumber, pageSize);
 
@@ -69,8 +69,8 @@ export default function LazyPortfoliosList() {
       <div>&nbsp;</div>
       <Flex justify="flex-end">
         <Switch.Root
-          checked={checked}
-          onCheckedChange={(e) => setChecked(e.checked)}
+          checked={view}
+          onCheckedChange={(e) => setView(e.checked)}
         >
           <Switch.HiddenInput/>
           <Switch.Control>
@@ -80,7 +80,7 @@ export default function LazyPortfoliosList() {
         </Switch.Root>
       </Flex>
       <div>&nbsp;</div>
-      {checked ? <PortfoliosTable items={items}/> : <LazyPortfoliosCards portfolios={items}/>}
+      {view ? <PortfoliosTable items={items}/> : <LazyPortfoliosCards portfolios={items}/>}
       <div>&nbsp;</div>
       <Separator/>
       <div>&nbsp;</div>
