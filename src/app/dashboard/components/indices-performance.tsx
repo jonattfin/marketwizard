@@ -5,7 +5,7 @@ import {Grid, GridItem} from "@chakra-ui/react";
 import {useQuery} from "@tanstack/react-query";
 import {IndicePerformanceDataType} from "@/shared/types";
 
-import React, {Suspense, useContext, useEffect, useMemo} from "react";
+import React, {Suspense, useContext} from "react";
 import {CountryContext} from "@/shared/context/country-context";
 import {IndicesTable} from "@/shared/indices-table";
 

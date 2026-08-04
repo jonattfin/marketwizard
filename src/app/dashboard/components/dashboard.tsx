@@ -10,12 +10,11 @@ import MarketPerformance from "@/app/dashboard/components/market-performance";
 import IndicesPerformance from "@/app/dashboard/components/indices-performance";
 import YoutubeVideo from "@/app/dashboard/components/youtube-video";
 import SectorPerformance from "@/app/dashboard/components/sector-performance";
-import {LuActivity, LuAxis3D, LuScale, LuFolderSearch, LuNewspaper} from "react-icons/lu";
+import {LuActivity, LuAxis3D, LuScale, LuNewspaper} from "react-icons/lu";
 
 import News from "@/app/dashboard/components/news";
 import {CountryContext} from "@/shared/context/country-context";
 
-import {MarketTreemap} from "@/shared/treemap";
 import {useCountries} from "@/shared/use-countries";
 
 export default function Dashboard() {

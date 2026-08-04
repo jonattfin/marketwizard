@@ -1,8 +1,6 @@
 import {
 	Center,
 	FormatNumber,
-	Grid,
-	GridItem,
 	Stack,
 	Table,
 	Tag

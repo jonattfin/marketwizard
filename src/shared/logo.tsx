@@ -15,7 +15,7 @@ export const Logo = () => {
       <IconButton variant={"ghost"} colorPalette={"border"}>
         <SiCoinmarketcap/>
         <Heading size="xl" maxW="20ch">
-          {chunks.map((chunk, index) => {
+          {chunks.map((chunk, _) => {
             return chunk.match ? (
               <Mark
                 key={chunk.text}

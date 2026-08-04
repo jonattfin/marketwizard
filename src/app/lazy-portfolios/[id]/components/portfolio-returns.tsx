@@ -10,8 +10,6 @@ export type PortfolioReturnsType = {
 	items: LazyPortfolioItemType[]
 }
 
-const nextRandom = () => random(5, 30).toFixed(2);
-
 export const PortfolioReturns = ({items}: PortfolioReturnsType) => {
 	const chart = useChart({
 		data: [
