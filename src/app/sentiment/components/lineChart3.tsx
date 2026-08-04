@@ -12,20 +12,22 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
+import {random} from "es-toolkit";
 
+const nextValue = () => random(4, 100);
 
 const Demo = () => {
   const chart = useChart({
     data: [
-      { thisYear: 10, lastYear: 4, month: "January" },
-      { thisYear: 95, lastYear: 50, month: "February" },
-      { thisYear: 87, lastYear: 59, month: "March" },
-      { thisYear: 88, lastYear: 60, month: "May" },
-      { thisYear: 65, lastYear: 50, month: "June" },
-      { thisYear: 90, lastYear: 50, month: "August" },
-      { thisYear: null, lastYear: 89, month: "October" },
-      { thisYear: null, lastYear: 120, month: "November" },
-      { thisYear: null, lastYear: 80, month: "December" },
+      { thisYear: nextValue(), lastYear: nextValue(), month: "January" },
+      { thisYear: nextValue(), lastYear: nextValue(), month: "February" },
+      { thisYear: nextValue(), lastYear: nextValue(), month: "March" },
+      { thisYear: nextValue(), lastYear: nextValue(), month: "May" },
+      { thisYear: nextValue(), lastYear: nextValue(), month: "June" },
+      { thisYear: nextValue(), lastYear: nextValue(), month: "August" },
+      { thisYear: null, lastYear: nextValue(), month: "October" },
+      { thisYear: null, lastYear: nextValue(), month: "November" },
+      { thisYear: null, lastYear: nextValue(), month: "December" },
     ],
     series: [
       { name: "thisYear", color: "teal.solid", label: "This Year" },
