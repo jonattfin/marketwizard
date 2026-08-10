@@ -1,4 +1,4 @@
-import {IMiscRepository} from "@/app/database/repositories/interfaces/i-misc-repository";
+import {IMiscRepository} from "@/app/database/interfaces/i-misc-repository";
 import {
   GainersDataType, IndicePerformanceDataType,
   LosersDataType, SectorPerformanceDataType,
@@ -9,7 +9,7 @@ import {
 import {take} from "es-toolkit";
 import dayjs from "dayjs";
 
-export class MiscRepository implements IMiscRepository {
+export class RapidMiscRepository implements IMiscRepository {
   async fetchGainers(countries: string[], period?: string): Promise<GainersDataType> {
     return {
       items: [],

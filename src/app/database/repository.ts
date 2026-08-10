@@ -3,17 +3,17 @@ import {PortfolioRepository} from "@/app/database/repositories/in-memory/portfol
 import {EtfRepository} from "@/app/database/repositories/in-memory/etf-repository";
 import {WatchlistRepository} from "@/app/database/repositories/in-memory/watchlist-repository";
 
-import {MiscRepository as RealMiscRepository} from "@/app/database/repositories/real/misc-repository";
-import {MiscRepository as RapidApiMiscRepository} from "@/app/database/repositories/rapid-api/misc-repository";
+import {DbMiscRepository} from "@/app/database/repositories/real/db-misc-repository";
 
 import {UpdateMiscRepository} from "@/app/database/repositories/real/update-misc-repository";
+import {RapidMiscRepository} from "@/app/database/repositories/rapid-api/rapid-misc-repository";
 
 enum Environment {
 	Development = 'development',
 	Production = 'production',
 }
 
-class EnvironmentFactory {
+class Factory {
 	getEnvironment(): Environment {
 		if (process.env.NODE_ENV === 'development') {
 			return Environment.Development;
@@ -23,18 +23,10 @@ class EnvironmentFactory {
 
 		return Environment.Development;
 	}
-}
-
-class Factory {
-	private readonly envFactory: EnvironmentFactory;
-
-	constructor(envFactory: EnvironmentFactory) {
-		this.envFactory = envFactory;
-	}
 
 	createMiscRepository() {
-		return this.envFactory.getEnvironment() === Environment.Development
-			? new MiscRepository() : new RealMiscRepository();
+		return this.getEnvironment() === Environment.Development
+			? new MiscRepository() : new DbMiscRepository();
 	}
 
 	createPortfolioRepository() {
@@ -50,12 +42,12 @@ class Factory {
 	}
 
 	createUpdateMiscRepository() {
-		return new UpdateMiscRepository(new MiscRepository(), new RapidApiMiscRepository());
+		const rapidMiscRepository = new RapidMiscRepository();
+		return new UpdateMiscRepository(rapidMiscRepository);
 	}
 }
 
-const envFactory = new EnvironmentFactory();
-const factory = new Factory(envFactory);
+const factory = new Factory();
 
 export const miscRepository = factory.createMiscRepository();
 export const updateMiscRepository = factory.createUpdateMiscRepository();

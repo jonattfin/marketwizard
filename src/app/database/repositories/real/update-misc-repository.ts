@@ -1,4 +1,4 @@
-import {IMiscRepository} from "@/app/database/repositories/interfaces/i-misc-repository";
+import {IMiscRepository} from "@/app/database/interfaces/i-misc-repository";
 
 import {drizzle,} from 'drizzle-orm/neon-http';
 import {cronJobsTable} from "../../schema";
@@ -7,12 +7,10 @@ import {eq} from "drizzle-orm";
 import {IndicePerformanceDataType, TopNewsDataType} from "@/shared/types";
 
 export class UpdateMiscRepository {
-  private readonly miscRepository: IMiscRepository;
-  private readonly realMiscRepository: IMiscRepository;
+  private readonly repository: IMiscRepository;
 
-  constructor(miscRepository: IMiscRepository, realMiscRepository: IMiscRepository) {
-    this.miscRepository = miscRepository;
-    this.realMiscRepository = realMiscRepository;
+  constructor(repository: IMiscRepository) {
+    this.repository = repository;
   }
 
   public async updateAll() {
@@ -30,57 +28,41 @@ export class UpdateMiscRepository {
   }
 
   private async updateTopNews() {
-    let news: TopNewsDataType;
-
-    try {
-      news = await this.realMiscRepository.fetchTopNews([]);
-    } catch (e) {
-      console.error(e);
-      news = await this.miscRepository.fetchTopNews([]);
-    }
-
+    const news = await this.repository.fetchTopNews([]);
     await executeQuery("top_news", this.buildObject(news))
   }
 
   private async updateIndicesPerformance() {
-    let indices: IndicePerformanceDataType;
-
-    try {
-      indices = await this.realMiscRepository.fetchIndicesPerformance();
-    } catch (e) {
-      console.error(e);
-      indices = await this.miscRepository.fetchIndicesPerformance();
-    }
-
+    const indices = await this.repository.fetchIndicesPerformance();
     await executeQuery("indice_performance", this.buildObject(indices));
   }
 
   private async updateSectorPerformance() {
-    const sectors = await this.miscRepository.fetchSectorPerformance([]);
+    const sectors = await this.repository.fetchSectorPerformance([]);
 
     await executeQuery("sector_performance", JSON.stringify(sectors));
   }
 
   private async updateWorstIndustries() {
-    const worstIndustries = await this.miscRepository.fetchWorstIndustries([], "");
+    const worstIndustries = await this.repository.fetchWorstIndustries([], "");
 
     await executeQuery("worst_industries", this.buildObject(worstIndustries));
   }
 
   private async updateGainers() {
-    const gainers = await this.miscRepository.fetchGainers([], "");
+    const gainers = await this.repository.fetchGainers([], "");
 
     await executeQuery("gainers", this.buildObject(gainers));
   }
 
   private async updateLosers() {
-    const losers = await this.miscRepository.fetchLosers([], "");
+    const losers = await this.repository.fetchLosers([], "");
 
     await executeQuery("losers", this.buildObject(losers));
   }
 
   private async updateTopIndustries() {
-    const topIndustries = await this.miscRepository.fetchTopIndustries([], "");
+    const topIndustries = await this.repository.fetchTopIndustries([], "");
 
     await executeQuery("top_industries", this.buildObject(topIndustries));
   }

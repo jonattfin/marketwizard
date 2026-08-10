@@ -1,6 +1,6 @@
 import {EtfThemeByIdType, EtfThemeType} from "@/shared/types";
 import {LoremIpsum} from "lorem-ipsum";
-import {IEtfRepository} from "@/app/database/repositories/interfaces/i-etf-repository";
+import {IEtfRepository} from "@/app/database/interfaces/i-etf-repository";
 
 const lorem = new LoremIpsum();
 

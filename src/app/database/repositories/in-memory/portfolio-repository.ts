@@ -2,7 +2,7 @@ import {LazyPortfolioType, PortfolioPerformanceType, PortfoliosAreaType, Portfol
 
 import {random} from "es-toolkit";
 import {LoremIpsum} from "lorem-ipsum";
-import {IPortfolioRepository} from "@/app/database/repositories/interfaces/i-portfolio-repository";
+import {IPortfolioRepository} from "@/app/database/interfaces/i-portfolio-repository";
 
 const lorem = new LoremIpsum();
 

@@ -1,4 +1,4 @@
-import {IMiscRepository} from "@/app/database/repositories/interfaces/i-misc-repository";
+import {IMiscRepository} from "@/app/database/interfaces/i-misc-repository";
 import {
   GainersDataType,
   IndicePerformanceDataType,
@@ -13,7 +13,7 @@ import {drizzle,} from 'drizzle-orm/neon-http';
 import {cronJobsTable} from "../../schema";
 import {eq} from "drizzle-orm";
 
-export class MiscRepository implements IMiscRepository {
+export class DbMiscRepository implements IMiscRepository {
   private readonly db = drizzle(process.env.DATABASE_URL!);
 
   async fetchIndicesPerformance(): Promise<IndicePerformanceDataType> {

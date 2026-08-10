@@ -7,7 +7,7 @@ import {
 } from "@/shared/types";
 import {orderBy, random, randomInt, range, take} from "es-toolkit";
 import {LoremIpsum} from "lorem-ipsum";
-import {IMiscRepository} from "@/app/database/repositories/interfaces/i-misc-repository";
+import {IMiscRepository} from "@/app/database/interfaces/i-misc-repository";
 import * as builder from "../builder";
 import dayjs from "dayjs";
 
