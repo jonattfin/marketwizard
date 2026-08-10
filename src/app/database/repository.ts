@@ -6,7 +6,7 @@ import {WatchlistRepository} from "@/app/database/repositories/in-memory/watchli
 import {DbMiscRepository} from "@/app/database/repositories/real/db-misc-repository";
 
 import {UpdateMiscRepository} from "@/app/database/repositories/real/update-misc-repository";
-import {RapidMiscRepository} from "@/app/database/repositories/rapid-api/rapid-misc-repository";
+// import {RapidMiscRepository} from "@/app/database/repositories/rapid-api/rapid-misc-repository";
 
 enum Environment {
 	Development = 'development',
@@ -42,8 +42,8 @@ class Factory {
 	}
 
 	createUpdateMiscRepository() {
-		const rapidMiscRepository = new RapidMiscRepository();
-		return new UpdateMiscRepository(rapidMiscRepository);
+		const miscRepository = new MiscRepository();
+		return new UpdateMiscRepository(miscRepository);
 	}
 }
 
