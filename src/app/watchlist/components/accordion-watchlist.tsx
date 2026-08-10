@@ -50,7 +50,7 @@ export const AccordionWatchlist = ({
                   <Icon fontSize="lg" color={"orange.200"}>
                     <LuAtom/>
                   </Icon>
-                  {`Watchlist: ${watchlist.name} | items: [${watchlist.items.length}]` }
+                  {`${watchlist.name} | items: [${watchlist.items.length}]` }
                   <Accordion.ItemIndicator/>
                 </Accordion.ItemTrigger>
                 <AbsoluteCenter axis="vertical" insetEnd="0">

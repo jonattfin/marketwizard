@@ -69,7 +69,7 @@ function createWatchlists(): WatchListPageType {
   const items = range(20).map(index => {
     return {
       id: index.toString(),
-      name: `${lorem.generateWords(1)}`,
+      name: `Watchlist ${index}`,
       items: range(random(3)).map(jIndex => {
         return {
           id: `${index}${jIndex}`,
