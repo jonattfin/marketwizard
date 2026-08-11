@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import {Stack, Table} from "@chakra-ui/react"
-import {AllocationSunburst} from "@/app/lazy-portfolios/[id]/components/allocation-sunburst";
-import {LazyPortfolioItemType} from "@/shared/types";
+import { Stack, Table } from "@chakra-ui/react";
+import { AllocationSunburst } from "@/app/lazy-portfolios/[id]/components/allocation-sunburst";
+import { LazyPortfolioItemType } from "@/shared/types";
 import Link from "next/link";
 
 type AllocationTableType = {
-  items: LazyPortfolioItemType[]
-}
+  items: LazyPortfolioItemType[];
+};
 
-export const AllocationTable = ({items = []}: AllocationTableType) => {
+export const AllocationTable = ({ items = [] }: AllocationTableType) => {
   return (
     <Stack>
       <>{`Asset Allocation and ETFs`}</>
       <div>&nbsp;</div>
       <div>&nbsp;</div>
-      <AllocationSunburst items={items}/>
+      <AllocationSunburst items={items} />
       <Table.Root size="sm">
         <Table.Header>
           <Table.Row>
@@ -39,6 +39,5 @@ export const AllocationTable = ({items = []}: AllocationTableType) => {
         </Table.Body>
       </Table.Root>
     </Stack>
-  )
-}
-
+  );
+};

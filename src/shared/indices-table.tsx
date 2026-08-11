@@ -1,17 +1,21 @@
-'use client';
+"use client";
 
-import {FormatNumber, Switch, Table} from "@chakra-ui/react";
-import {IndicePerformanceDataType} from "@/shared/types";
-import {HiCheck, HiX} from "react-icons/hi";
-import {lastUpdatedAt} from "@/shared/helpers";
+import { FormatNumber, Switch, Table } from "@chakra-ui/react";
+import { IndicePerformanceDataType } from "@/shared/types";
+import { HiCheck, HiX } from "react-icons/hi";
+import { lastUpdatedAt } from "@/shared/helpers";
 
 export type IndiceTableType = {
-  data: IndicePerformanceDataType | undefined
+  data: IndicePerformanceDataType | undefined;
   countries: string[];
   onCountryChanged: (countryCode: string, checked: boolean) => void;
-}
+};
 
-export const IndicesTable = ({data, countries, onCountryChanged}: Readonly<IndiceTableType>) => {
+export const IndicesTable = ({
+  data,
+  countries,
+  onCountryChanged,
+}: Readonly<IndiceTableType>) => {
   return (
     <>
       <Table.Root size="sm" interactive>
@@ -26,9 +30,7 @@ export const IndicesTable = ({data, countries, onCountryChanged}: Readonly<Indic
         <Table.Body>
           {data?.items?.map((item) => (
             <Table.Row key={item.id}>
-              <Table.Cell>
-                {item.name}
-              </Table.Cell>
+              <Table.Cell>{item.name}</Table.Cell>
               {/*<Table.Cell>*/}
               {/*  <Tag.Root size="md" variant={"subtle"} colorPalette={item.ytdPerformance > 0 ? "green" : "orange"}>*/}
               {/*    <Tag.Label><FormatNumber*/}
@@ -40,16 +42,22 @@ export const IndicesTable = ({data, countries, onCountryChanged}: Readonly<Indic
               {/*  </Tag.Root>*/}
               {/*</Table.Cell>*/}
               <Table.Cell>
-                <FormatNumber value={item.points}/>
+                <FormatNumber value={item.points} />
               </Table.Cell>
               <Table.Cell textAlign="end">
-                <Switch.Root size={"sm"} variant={"raised"} checked={countries.includes(item.countryCode)}
-                             onCheckedChange={(e) => onCountryChanged(item.countryCode, e.checked)}>
-                  <Switch.HiddenInput/>
+                <Switch.Root
+                  size={"sm"}
+                  variant={"raised"}
+                  checked={countries.includes(item.countryCode)}
+                  onCheckedChange={(e) =>
+                    onCountryChanged(item.countryCode, e.checked)
+                  }
+                >
+                  <Switch.HiddenInput />
                   <Switch.Control>
                     <Switch.Thumb>
-                      <Switch.ThumbIndicator fallback={<HiX color="black"/>}>
-                        <HiCheck/>
+                      <Switch.ThumbIndicator fallback={<HiX color="black" />}>
+                        <HiCheck />
                       </Switch.ThumbIndicator>
                     </Switch.Thumb>
                   </Switch.Control>
@@ -61,5 +69,5 @@ export const IndicesTable = ({data, countries, onCountryChanged}: Readonly<Indic
       </Table.Root>
       {lastUpdatedAt(data?.date)}
     </>
-  )
-}
+  );
+};

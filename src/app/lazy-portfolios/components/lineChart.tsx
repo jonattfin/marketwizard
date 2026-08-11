@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Chart, useChart } from "@chakra-ui/charts"
+import { Chart, useChart } from "@chakra-ui/charts";
 import {
   CartesianGrid,
   Legend,
@@ -10,69 +10,80 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts"
-import {random} from "es-toolkit";
+} from "recharts";
+import { random } from "es-toolkit";
 
 export type PortfoliosLineChartType = {
   name: string;
   performance: number;
-}
+};
 
 type DataSeriesItem = {
-	name: string;
-	color:string;
-	label: string;
-}
+  name: string;
+  color: string;
+  label: string;
+};
 
 type DataItem = {
-	month: string;
-}
+  month: string;
+};
 
-const Demo = ({portfolios}: {portfolios: PortfoliosLineChartType[]}) => {
-	const buildData = () => {
-		const data : DataItem[] = [];
+const Demo = ({ portfolios }: { portfolios: PortfoliosLineChartType[] }) => {
+  const buildData = () => {
+    const data: DataItem[] = [];
 
-		const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		const performance = [1.5, -0.9, -4.9, 10.5, 5.3, -1.3, 0.1]
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const performance = [1.5, -0.9, -4.9, 10.5, 5.3, -1.3, 0.1];
 
-		months.forEach((month, monthIndex) => {
-			const obj:any = {
-				month
-			};
+    months.forEach((month, monthIndex) => {
+      const obj: any = {
+        month,
+      };
 
-			portfolios.forEach(portfolio => {
-				obj[portfolio.name] = (performance[monthIndex] ?? 0) + random(4);
-			});
+      portfolios.forEach((portfolio) => {
+        obj[portfolio.name] = (performance[monthIndex] ?? 0) + random(4);
+      });
 
-			data.push(obj)
-		})
+      data.push(obj);
+    });
 
-		return data;
-	}
+    return data;
+  };
 
-	const buildSeries = () => {
-		const series: DataSeriesItem[] = [];
+  const buildSeries = () => {
+    const series: DataSeriesItem[] = [];
 
-		const colors = ["teal.solid", 'orange', 'green', 'blue', 'red', 'yellow'];
+    const colors = ["teal.solid", "orange", "green", "blue", "red", "yellow"];
 
-		portfolios.forEach((portfolio, index) => {
-				series.push({
-					name: portfolio.name,
-					color: colors[index] || 'teal.solid',
-					label: portfolio.name,
-				})
-			})
+    portfolios.forEach((portfolio, index) => {
+      series.push({
+        name: portfolio.name,
+        color: colors[index] || "teal.solid",
+        label: portfolio.name,
+      });
+    });
 
-		return series;
-	}
+    return series;
+  };
 
-	const chart = useChart({
+  const chart = useChart({
     data: buildData(),
-		// @ts-ignore
-    series: [
-	    ...buildSeries()
-    ]
-  })
+    // @ts-ignore
+    series: [...buildSeries()],
+  });
 
   return (
     <Chart.Root maxH="sm" chart={chart}>
@@ -119,7 +130,7 @@ const Demo = ({portfolios}: {portfolios: PortfoliosLineChartType[]}) => {
         ))}
       </LineChart>
     </Chart.Root>
-  )
-}
+  );
+};
 
 export default Demo;

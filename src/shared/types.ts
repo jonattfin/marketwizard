@@ -28,7 +28,7 @@ export type EtfByIdItemType = {
   useOfProfits: string;
   fundDomicile: string;
   replicationMethod: string;
-}
+};
 
 export type EtfThemeByIdType = {
   name?: string;
@@ -62,24 +62,24 @@ export type IndicesAreaType = {
 export type IndiceAreaDto = {
   month: string;
   indices: {
-    name: string,
+    name: string;
     performance: number;
-  }[]
+  }[];
 };
 
 export type PortfolioAreaDto = {
   month: string;
   portfolios: {
-    name: string,
+    name: string;
     performance: string;
-  }[]
+  }[];
 };
 
 export type PortfolioAssetType = {
   symbol: string;
   numberOfShares: number;
   pricePerShare: number;
-}
+};
 
 // Watchlists
 
@@ -93,13 +93,13 @@ export type WatchlistItemType = {
 export type WatchListType = {
   id: string;
   name: string;
-  items: WatchlistItemType[]
+  items: WatchlistItemType[];
 };
 
 export type WatchListPageType = {
-  items: WatchListType[],
-  nextCursor: string | null
-}
+  items: WatchListType[];
+  nextCursor: string | null;
+};
 
 // Others
 
@@ -112,32 +112,32 @@ export type TopNewsType = {
   source?: string;
   description?: string;
   url?: string;
-}
+};
 
 export type TopNewsDataType = {
   items: TopNewsType[];
   date?: Date;
-}
+};
 
 export type PortfolioPerformanceType = {
   id: string;
   portfolioName: string;
   "7d": number;
   "1y": number;
-}
+};
 
 export type IndicePerformanceType = {
   id: number;
   name: string;
-  ytdPerformance: number,
+  ytdPerformance: number;
   countryCode: string;
   points: number;
-}
+};
 
 export type IndicePerformanceDataType = {
   items: IndicePerformanceType[];
   date?: Date;
-}
+};
 
 export enum SectorType {
   BasicMaterials = "Basic Materials",
@@ -158,12 +158,12 @@ export type SectorPerformanceType = {
   type: SectorType;
   change: number;
   country: string;
-}
+};
 
 export type SectorPerformanceDataType = {
-  items: SectorPerformanceType[],
-  date?: Date,
-}
+  items: SectorPerformanceType[];
+  date?: Date;
+};
 
 export enum CountryType {
   US = "United States",
@@ -179,7 +179,7 @@ export type EquityType = {
   change: number;
   lastPrice: number;
   volume: number;
-}
+};
 
 type ItemType = "s" | "c" | "f";
 
@@ -190,70 +190,70 @@ export type LazyPortfolioItemType = {
   name: string;
   themes: string;
   type: ItemType;
-}
+};
 
 export type LazyPortfolioType = {
   id: number;
   name: string;
   description?: string;
   "1d": number;
-  "ytd": number;
+  ytd: number;
   dividendYield: number;
   performanceRank: number;
   maxDrawdown: number;
   expenseRatio: number;
   sharpeRatio: number;
-  items: LazyPortfolioItemType[]
-}
+  items: LazyPortfolioItemType[];
+};
 
 export type TreeMapType = {
   sector: SectorType;
   companies: {
     company: string;
     change: number;
-  }[]
-}
+  }[];
+};
 
 export type GainersType = {
   type: SectorType;
   change: number;
   country: string;
-}
+};
 
 export type GainersDataType = {
   items: GainersType[];
   date?: Date;
-}
+};
 
 export type LosersType = {
   type: SectorType;
   change: number;
   country: string;
-}
+};
 
 export type LosersDataType = {
   items: LosersType[];
   date?: Date;
-}
+};
 
 export type TopIndustriesType = {
   type: SectorType;
   change: number;
   country: string;
-}
+};
 
 export type TopIndustriesDataType = {
   items: TopIndustriesType[];
   date?: Date;
-}
+};
 
 export type WorstIndustriesType = {
   type: SectorType;
   change: number;
   country: string;
-}
+};
 
 export type WorstIndustriesDataType = {
   items: WorstIndustriesType[];
   date?: Date;
-}
+};

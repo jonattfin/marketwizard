@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-const YouTubeVideo = ({ videoId = 'QB5BNdBFujE?si=-y-mzeVk2jrRqYMN' }) => {
+const YouTubeVideo = ({ videoId = "QB5BNdBFujE?si=-y-mzeVk2jrRqYMN" }) => {
   return (
     <iframe
       width="330"

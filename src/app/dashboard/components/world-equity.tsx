@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import {Flex, FormatNumber, Icon, Table, Tag} from "@chakra-ui/react"
-import {CountryType, EquityType} from "@/shared/types";
-import {useQuery} from "@tanstack/react-query";
+import { Flex, FormatNumber, Icon, Table, Tag } from "@chakra-ui/react";
+import { CountryType, EquityType } from "@/shared/types";
+import { useQuery } from "@tanstack/react-query";
 import Loading from "@/shared/loading";
 import {
   LuBadgeEuro,
@@ -13,25 +13,25 @@ import {
 } from "react-icons/lu";
 
 const useWorldEquity = () => {
-  const {isPending, error, data} = useQuery<EquityType[]>({
+  const { isPending, error, data } = useQuery<EquityType[]>({
     queryKey: ["world-equity"],
     queryFn: async () => {
       const response = await fetch("/api/dashboard/world-equity");
       return await response.json();
-    }
+    },
   });
 
   return {
     isPending,
     error,
-    data
-  }
-}
+    data,
+  };
+};
 
 const WorldEquity = () => {
-  const {isPending, error, data} = useWorldEquity();
+  const { isPending, error, data } = useWorldEquity();
 
-  if (isPending) return <Loading/>
+  if (isPending) return <Loading />;
   if (error) return `Page ${error}`;
 
   return (
@@ -48,43 +48,57 @@ const WorldEquity = () => {
         <Table.Body>
           {data?.map((item) => (
             <Table.Row key={item.country}>
-
               <Table.Cell>
                 <Icon fontSize="lg" color="fg.subtle">
                   {renderCountryIcon(item.country)}
                 </Icon>
-                {` ${item.country}`}</Table.Cell>
+                {` ${item.country}`}
+              </Table.Cell>
               <Table.Cell>
-                <Tag.Root size="md" variant={"subtle"} colorPalette={item.change > 0 ? "green" : "orange"}>
-                  <Tag.Label><FormatNumber
-                    value={item.change}
-                    style="percent"
-                    maximumFractionDigits={2}
-                    minimumFractionDigits={2}
-                  /></Tag.Label>
+                <Tag.Root
+                  size="md"
+                  variant={"subtle"}
+                  colorPalette={item.change > 0 ? "green" : "orange"}
+                >
+                  <Tag.Label>
+                    <FormatNumber
+                      value={item.change}
+                      style="percent"
+                      maximumFractionDigits={2}
+                      minimumFractionDigits={2}
+                    />
+                  </Tag.Label>
                 </Tag.Root>
               </Table.Cell>
               <Table.Cell>
-                {item.lastPrice && <FormatNumber value={item.lastPrice} style="currency" currency="USD"/>}
+                {item.lastPrice && (
+                  <FormatNumber
+                    value={item.lastPrice}
+                    style="currency"
+                    currency="USD"
+                  />
+                )}
               </Table.Cell>
               <Table.Cell textAlign="end">
-                {item.volume && <FormatNumber value={item.volume} style="decimal"/>}
+                {item.volume && (
+                  <FormatNumber value={item.volume} style="decimal" />
+                )}
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table.Root>
     </Flex>
-  )
-}
+  );
+};
 
 const iconsMap = {
-  [CountryType.US]: <LuBadgeDollarSign/>,
-  [CountryType.CA]: <LuBanknote/>,
-  [CountryType.GB]: <LuBadgePoundSterling/>,
-  [CountryType.DE]: <LuBadgeEuro/>,
-  [CountryType.FR]: <LuBadgeEuro/>,
-  [CountryType.AU]: <LuAperture/>,
+  [CountryType.US]: <LuBadgeDollarSign />,
+  [CountryType.CA]: <LuBanknote />,
+  [CountryType.GB]: <LuBadgePoundSterling />,
+  [CountryType.DE]: <LuBadgeEuro />,
+  [CountryType.FR]: <LuBadgeEuro />,
+  [CountryType.AU]: <LuAperture />,
 };
 
 function renderCountryIcon(countryType: CountryType) {

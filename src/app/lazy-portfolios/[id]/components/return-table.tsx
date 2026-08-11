@@ -1,28 +1,34 @@
-'use client';
+"use client";
 
-import {FormatNumber, Stack, Table, Tag} from "@chakra-ui/react"
-import {random} from "es-toolkit";
-import {LazyPortfolioItemType} from "@/shared/types";
+import { FormatNumber, Stack, Table, Tag } from "@chakra-ui/react";
+import { random } from "es-toolkit";
+import { LazyPortfolioItemType } from "@/shared/types";
 
 export type ReturnTableType = {
   items: LazyPortfolioItemType[];
-}
+};
 
-export const ReturnTable = ({items}: ReturnTableType) => {
+export const ReturnTable = ({ items }: ReturnTableType) => {
   const tableData = buildTableData(items);
 
   const renderPercentage = (value: number) => {
     return (
-      <Tag.Root size="md" variant={"subtle"} colorPalette={value > 0 ? "green" : "orange"}>
-        <Tag.Label><FormatNumber
-          value={value}
-          style="percent"
-          maximumFractionDigits={2}
-          minimumFractionDigits={2}
-        /></Tag.Label>
+      <Tag.Root
+        size="md"
+        variant={"subtle"}
+        colorPalette={value > 0 ? "green" : "orange"}
+      >
+        <Tag.Label>
+          <FormatNumber
+            value={value}
+            style="percent"
+            maximumFractionDigits={2}
+            minimumFractionDigits={2}
+          />
+        </Tag.Label>
       </Tag.Root>
-    )
-  }
+    );
+  };
 
   return (
     <Stack>
@@ -52,8 +58,8 @@ export const ReturnTable = ({items}: ReturnTableType) => {
         </Table.Body>
       </Table.Root>
     </Stack>
-  )
-}
+  );
+};
 
 function buildTableData(items: LazyPortfolioItemType[]) {
   const nextValue = () => random(-0.5, 0.5);
@@ -62,14 +68,14 @@ function buildTableData(items: LazyPortfolioItemType[]) {
     id: item.id,
     ticker: item.ticker,
     name: item.name,
-     ytd: nextValue(),
-      "1m": nextValue(),
-      "6m": nextValue(),
-      "1y": nextValue(),
-      "5y": nextValue()
-  }))
+    ytd: nextValue(),
+    "1m": nextValue(),
+    "6m": nextValue(),
+    "1y": nextValue(),
+    "5y": nextValue(),
+  }));
 
   return {
     items: tableItems,
-  }
+  };
 }

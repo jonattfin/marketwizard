@@ -1,19 +1,19 @@
-import {Heading, IconButton, Mark, useHighlight} from "@chakra-ui/react";
+import { Heading, IconButton, Mark, useHighlight } from "@chakra-ui/react";
 import Link from "next/link";
-import {SiCoinmarketcap} from "react-icons/si";
+import { SiCoinmarketcap } from "react-icons/si";
 
-import {Fragment} from "react";
+import { Fragment } from "react";
 
 export const Logo = () => {
   const chunks = useHighlight({
     text: "Market Wizard",
     query: ["Wizard"],
-  })
+  });
 
   return (
     <Link href={"/"}>
       <IconButton variant={"ghost"} colorPalette={"border"}>
-        <SiCoinmarketcap/>
+        <SiCoinmarketcap />
         <Heading size="xl" maxW="20ch">
           {chunks.map((chunk, _) => {
             return chunk.match ? (
@@ -29,10 +29,10 @@ export const Logo = () => {
               </Mark>
             ) : (
               <Fragment key={chunk.text}>{chunk.text}</Fragment>
-            )
+            );
           })}
         </Heading>
       </IconButton>
     </Link>
-  )
-}
+  );
+};

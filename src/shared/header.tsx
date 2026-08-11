@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   useDisclosure,
@@ -6,68 +6,69 @@ import {
   Portal,
   CloseButton,
   Icon,
-  Box, Flex, Switch, HStack, VStack, Button
+  Box,
+  Flex,
+  Switch,
+  HStack,
+  VStack,
+  Button,
 } from "@chakra-ui/react";
 
-import {LuMenu} from "react-icons/lu";
-import {FaMoon, FaSun} from "react-icons/fa";
-import {Logo} from "@/shared/logo";
+import { LuMenu } from "react-icons/lu";
+import { FaMoon, FaSun } from "react-icons/fa";
+import { Logo } from "@/shared/logo";
 import Link from "next/link";
 
 const links = [
-  {name: "Home", href: "/"},
-  {name: "Investor sentiment", href: "/sentiment"},
-  {name: "Maps", href: "/maps"},
-  {name: "Lazy Portfolios", href: "/lazy-portfolios"},
+  { name: "Home", href: "/" },
+  { name: "Investor sentiment", href: "/sentiment" },
+  { name: "Maps", href: "/maps" },
+  { name: "Lazy Portfolios", href: "/lazy-portfolios" },
   // {name: "User Portfolios", href: "/portfolios"},
-  {name: "ETFs", href: "/etfs"},
-  {name: "Watchlist", href: "/watchlist"},
+  { name: "ETFs", href: "/etfs" },
+  { name: "Watchlist", href: "/watchlist" },
 ];
 
-const MenuLinks = ({isMobile = false}) => {
+const MenuLinks = ({ isMobile = false }) => {
   const LinkComponent = isMobile ? VStack : HStack;
 
   return (
     <LinkComponent gap={isMobile ? 4 : 8} align="center">
       {links.map((link) => (
-        <Link
-          key={link.name}
-          href={link.href}
-        >
+        <Link key={link.name} href={link.href}>
           {link.name}
         </Link>
       ))}
-
     </LinkComponent>
   );
 };
 
 const MobileDrawer = () => {
-  const {open, onToggle} = useDisclosure();
+  const { open, onToggle } = useDisclosure();
 
   return (
     <Drawer.Root open={open} onOpenChange={onToggle} size="full">
       <Drawer.Trigger asChild>
         <Button variant="outline" size="sm">
           <Icon color="blue.600">
-            <LuMenu/>
+            <LuMenu />
           </Icon>
         </Button>
       </Drawer.Trigger>
       <Portal>
-        <Drawer.Backdrop/>
+        <Drawer.Backdrop />
         <Drawer.Positioner>
           <Drawer.Content>
             <Drawer.Header>
               <Drawer.Title>
-                <Logo/>
+                <Logo />
               </Drawer.Title>
             </Drawer.Header>
             <Drawer.Body>
-              <MenuLinks isMobile/>
+              <MenuLinks isMobile />
             </Drawer.Body>
             <Drawer.CloseTrigger asChild>
-              <CloseButton size="md"/>
+              <CloseButton size="md" />
             </Drawer.CloseTrigger>
           </Drawer.Content>
         </Drawer.Positioner>
@@ -79,25 +80,28 @@ const MobileDrawer = () => {
 export type HamburgerMenuType = {
   theme: string;
   setTheme: (theme: "dark" | "light") => void;
-}
+};
 
-function HamburgerMenu({theme, setTheme}: Readonly<HamburgerMenuType>) {
+function HamburgerMenu({ theme, setTheme }: Readonly<HamburgerMenuType>) {
   const renderThemeSwitch = () => {
-
     return (
-      <Switch.Root colorPalette="orange" checked={theme === "dark"} onCheckedChange={(e) => {
-        setTheme(e.checked ? "dark" : "light");
-      }}>
-        <Switch.HiddenInput/>
+      <Switch.Root
+        colorPalette="orange"
+        checked={theme === "dark"}
+        onCheckedChange={(e) => {
+          setTheme(e.checked ? "dark" : "light");
+        }}
+      >
+        <Switch.HiddenInput />
         <Switch.Control>
-          <Switch.Thumb/>
-          <Switch.Indicator fallback={<Icon as={FaMoon} color="gray.400"/>}>
-            <Icon as={FaSun} color="yellow.400"/>
+          <Switch.Thumb />
+          <Switch.Indicator fallback={<Icon as={FaMoon} color="gray.400" />}>
+            <Icon as={FaSun} color="yellow.400" />
           </Switch.Indicator>
         </Switch.Control>
       </Switch.Root>
-    )
-  }
+    );
+  };
 
   return (
     <div>
@@ -106,20 +110,19 @@ function HamburgerMenu({theme, setTheme}: Readonly<HamburgerMenuType>) {
         align="center"
         justify="space-between"
         wrap="wrap"
-        gap={{base: 8, lg: 16}}
+        gap={{ base: 8, lg: 16 }}
         mx="auto"
       >
-
         {/* Desktop Menu */}
-        <Box display={{base: "none", md: "block"}}>
-          <MenuLinks/>
+        <Box display={{ base: "none", md: "block" }}>
+          <MenuLinks />
         </Box>
 
         {renderThemeSwitch()}
 
         {/* Mobile Drawer */}
-        <Box display={{base: "block", md: "none"}}>
-          <MobileDrawer/>
+        <Box display={{ base: "block", md: "none" }}>
+          <MobileDrawer />
         </Box>
       </Flex>
     </div>
@@ -129,13 +132,13 @@ function HamburgerMenu({theme, setTheme}: Readonly<HamburgerMenuType>) {
 export type HeaderMenuType = {
   theme: string;
   setTheme: (theme: "dark" | "light") => void;
-}
+};
 
-export default function Header({theme, setTheme}: Readonly<HeaderMenuType>) {
+export default function Header({ theme, setTheme }: Readonly<HeaderMenuType>) {
   return (
     <Flex justify="space-between">
-      <Logo/>
-      <HamburgerMenu theme={theme} setTheme={setTheme}/>
+      <Logo />
+      <HamburgerMenu theme={theme} setTheme={setTheme} />
     </Flex>
-  )
+  );
 }

@@ -1,11 +1,19 @@
-'use client';
+"use client";
 
-import {Flex, FormatNumber, Icon, Splitter, Table, Tag, useBreakpointValue} from "@chakra-ui/react"
-import {useQuery} from "@tanstack/react-query";
-import {SectorPerformanceDataType, SectorType} from "@/shared/types";
+import {
+  Flex,
+  FormatNumber,
+  Icon,
+  Splitter,
+  Table,
+  Tag,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
+import { SectorPerformanceDataType, SectorType } from "@/shared/types";
 import Loading from "@/shared/loading";
-import {drop, take} from "es-toolkit";
-import {useContext, useMemo} from "react";
+import { drop, take } from "es-toolkit";
+import { useContext, useMemo } from "react";
 import {
   LuActivity,
   LuAxis3D,
@@ -18,31 +26,33 @@ import {
   LuAntenna,
   LuAward,
   LuAmbulance,
-  LuBolt
+  LuBolt,
 } from "react-icons/lu";
-import {CountryContext} from "@/shared/context/country-context";
-import {lastUpdatedAt} from "@/shared/helpers";
+import { CountryContext } from "@/shared/context/country-context";
+import { lastUpdatedAt } from "@/shared/helpers";
 
 const useSectorPerformance = () => {
   const countries = useContext(CountryContext);
 
-  const {isPending, error, data} = useQuery<SectorPerformanceDataType>({
+  const { isPending, error, data } = useQuery<SectorPerformanceDataType>({
     queryKey: ["sector-performance", countries],
     queryFn: async () => {
-      const response = await fetch(`/api/dashboard/sector-performance?countries=${encodeURIComponent(JSON.stringify(countries))}`);
+      const response = await fetch(
+        `/api/dashboard/sector-performance?countries=${encodeURIComponent(JSON.stringify(countries))}`,
+      );
       return await response.json();
-    }
+    },
   });
 
   return {
     isPending,
     error,
-    data
-  }
-}
+    data,
+  };
+};
 
 const SectorPerformanceTable = () => {
-  const {isPending, error, data} = useSectorPerformance();
+  const { isPending, error, data } = useSectorPerformance();
 
   const orientation = useBreakpointValue<"horizontal" | "vertical">({
     base: "vertical",
@@ -56,35 +66,35 @@ const SectorPerformanceTable = () => {
     const leftArray = take(data?.items || [], midpoint);
     const rightArray = drop(data?.items || [], midpoint);
 
-    return {leftArray, rightArray};
-  }, [data])
+    return { leftArray, rightArray };
+  }, [data]);
 
-  if (isPending) return <Loading/>
+  if (isPending) return <Loading />;
   if (error) return `Page ${error}`;
 
   return (
     <>
       <Flex gap="4" justify={"space-evenly"}>
         <Splitter.Root
-          panels={[{id: "a"}, {id: "b"}]}
+          panels={[{ id: "a" }, { id: "b" }]}
           orientation={orientation}
           minH={minH}
         >
           <Splitter.Panel id="a">
-            <SectorPerformance items={arrays.leftArray} date={data?.date}/>
+            <SectorPerformance items={arrays.leftArray} date={data?.date} />
           </Splitter.Panel>
-          <Splitter.ResizeTrigger id="a:b"/>
+          <Splitter.ResizeTrigger id="a:b" />
           <Splitter.Panel id="b">
-            <SectorPerformance items={arrays.rightArray} date={data?.date}/>
+            <SectorPerformance items={arrays.rightArray} date={data?.date} />
           </Splitter.Panel>
         </Splitter.Root>
       </Flex>
       {lastUpdatedAt(data?.date)}
     </>
-  )
-}
+  );
+};
 
-const SectorPerformance = ({items}: SectorPerformanceDataType) => {
+const SectorPerformance = ({ items }: SectorPerformanceDataType) => {
   return (
     <Table.Root>
       <Table.Header>
@@ -103,7 +113,11 @@ const SectorPerformance = ({items}: SectorPerformanceDataType) => {
               {` ${item.type}`}
             </Table.Cell>
             <Table.Cell textAlign="end">
-              <Tag.Root size="md" variant={"subtle"} colorPalette={item.change > 0 ? "green" : "orange"}>
+              <Tag.Root
+                size="md"
+                variant={"subtle"}
+                colorPalette={item.change > 0 ? "green" : "orange"}
+              >
                 <Tag.Label>
                   <FormatNumber
                     value={item.change}
@@ -118,22 +132,22 @@ const SectorPerformance = ({items}: SectorPerformanceDataType) => {
         ))}
       </Table.Body>
     </Table.Root>
-  )
-}
+  );
+};
 
 const iconsMap = {
-  [SectorType.Telecom]: <LuAntenna/>,
-  [SectorType.Energy]: <LuBanknote/>,
-  [SectorType.Financials]: <LuAxis3D/>,
-  [SectorType.Industrials]: <LuArchive/>,
-  [SectorType.Materials]: <LuAtom/>,
-  [SectorType.Utilities]: <LuAperture/>,
-  [SectorType.BasicMaterials]: <LuAnvil/>,
-  [SectorType.ConsumerGoods]: <LuActivity/>,
-  [SectorType.HealthCare]: <LuAmbulance/>,
-  [SectorType.ConsumerServices]: <LuAward/>,
-  [SectorType.CustomerStaples]: <LuApple/>,
-  [SectorType.Technology]: <LuBolt/>,
+  [SectorType.Telecom]: <LuAntenna />,
+  [SectorType.Energy]: <LuBanknote />,
+  [SectorType.Financials]: <LuAxis3D />,
+  [SectorType.Industrials]: <LuArchive />,
+  [SectorType.Materials]: <LuAtom />,
+  [SectorType.Utilities]: <LuAperture />,
+  [SectorType.BasicMaterials]: <LuAnvil />,
+  [SectorType.ConsumerGoods]: <LuActivity />,
+  [SectorType.HealthCare]: <LuAmbulance />,
+  [SectorType.ConsumerServices]: <LuAward />,
+  [SectorType.CustomerStaples]: <LuApple />,
+  [SectorType.Technology]: <LuBolt />,
 };
 
 function renderSectorIcon(sector: SectorType) {

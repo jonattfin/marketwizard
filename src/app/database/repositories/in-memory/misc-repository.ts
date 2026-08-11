@@ -1,13 +1,21 @@
 import {
   CountryType,
-  EquityType, GainersDataType, IndicePerformanceDataType,
-  LosersDataType, SectorPerformanceDataType,
-  SectorType, TopIndustriesDataType, TopIndustriesType, TopNewsDataType,
-  TreeMapType, WorstIndustriesDataType, WorstIndustriesType
+  EquityType,
+  GainersDataType,
+  IndicePerformanceDataType,
+  LosersDataType,
+  SectorPerformanceDataType,
+  SectorType,
+  TopIndustriesDataType,
+  TopIndustriesType,
+  TopNewsDataType,
+  TreeMapType,
+  WorstIndustriesDataType,
+  WorstIndustriesType,
 } from "@/shared/types";
-import {orderBy, random, randomInt, range, take} from "es-toolkit";
-import {LoremIpsum} from "lorem-ipsum";
-import {IMiscRepository} from "@/app/database/interfaces/i-misc-repository";
+import { orderBy, random, randomInt, range, take } from "es-toolkit";
+import { LoremIpsum } from "lorem-ipsum";
+import { IMiscRepository } from "@/app/database/interfaces/i-misc-repository";
 import * as builder from "../builder";
 import dayjs from "dayjs";
 
@@ -30,112 +38,185 @@ export class MiscRepository implements IMiscRepository {
         country,
         sentiment: Number.parseFloat(random(-1, 1).toPrecision(2)),
         source: "Reuters",
-        description: lorem.generateSentences(2)
-      }
-    })
+        description: lorem.generateSentences(2),
+      };
+    });
 
-    return {items, date: dayjs().toDate()};
+    return { items, date: dayjs().toDate() };
   }
 
   async fetchIndicesPerformance(): Promise<IndicePerformanceDataType> {
     const values = [
-      {id: 1, name: "S&P 500", ytdPerformance: 0.12, points: 6880, countryCode: "USA"},
-      {id: 2, name: "Nikkei 225", ytdPerformance: 0.14, points: 43274, countryCode: "JPN"},
-      {id: 3, name: "DAX", ytdPerformance: 0.08, points: 24189, countryCode: "DEU"},
-      {id: 4, name: "FTSE 100", ytdPerformance: 0.07, points: 9165, countryCode: "GBR"},
-      {id: 5, name: "Stoxx 50", ytdPerformance: 0.06, points: 5389, countryCode: "FRA"},
-      {id: 6, name: "IBEX 35", ytdPerformance: 0.05, points: 15021, countryCode: "ESP"},
+      {
+        id: 1,
+        name: "S&P 500",
+        ytdPerformance: 0.12,
+        points: 6880,
+        countryCode: "USA",
+      },
+      {
+        id: 2,
+        name: "Nikkei 225",
+        ytdPerformance: 0.14,
+        points: 43274,
+        countryCode: "JPN",
+      },
+      {
+        id: 3,
+        name: "DAX",
+        ytdPerformance: 0.08,
+        points: 24189,
+        countryCode: "DEU",
+      },
+      {
+        id: 4,
+        name: "FTSE 100",
+        ytdPerformance: 0.07,
+        points: 9165,
+        countryCode: "GBR",
+      },
+      {
+        id: 5,
+        name: "Stoxx 50",
+        ytdPerformance: 0.06,
+        points: 5389,
+        countryCode: "FRA",
+      },
+      {
+        id: 6,
+        name: "IBEX 35",
+        ytdPerformance: 0.05,
+        points: 15021,
+        countryCode: "ESP",
+      },
 
-      {id: 7, name: "Shanghai Composite", ytdPerformance: 0.03, points: 3700, countryCode: "CHN"},
-      {id: 8, name: "Sensex 30", ytdPerformance: 0.15, points: 67000, countryCode: "IND"},
-      {id: 9, name: "ASX 200", ytdPerformance: 0.05, points: 7150, countryCode: "AUS"},
-      {id: 10, name: "KOSPI", ytdPerformance: 0.06, points: 2760, countryCode: "KOR"},
+      {
+        id: 7,
+        name: "Shanghai Composite",
+        ytdPerformance: 0.03,
+        points: 3700,
+        countryCode: "CHN",
+      },
+      {
+        id: 8,
+        name: "Sensex 30",
+        ytdPerformance: 0.15,
+        points: 67000,
+        countryCode: "IND",
+      },
+      {
+        id: 9,
+        name: "ASX 200",
+        ytdPerformance: 0.05,
+        points: 7150,
+        countryCode: "AUS",
+      },
+      {
+        id: 10,
+        name: "KOSPI",
+        ytdPerformance: 0.06,
+        points: 2760,
+        countryCode: "KOR",
+      },
     ];
 
     return {
       items: values,
-      date: dayjs().toDate()
+      date: dayjs().toDate(),
     };
   }
 
-  async fetchSectorPerformance(countries: string[]): Promise<SectorPerformanceDataType> {
+  async fetchSectorPerformance(
+    countries: string[],
+  ): Promise<SectorPerformanceDataType> {
     let country = "N/A";
     if (countries.length > 0) {
       country = countries[randomInt(0, countries.length)];
     }
 
-    const values = Object.values(SectorType).map(type => ({
+    const values = Object.values(SectorType).map((type) => ({
       type,
       change: random(-0.1, 0.1),
-      country: country
+      country: country,
     }));
 
     return {
       items: values,
-      date: dayjs().toDate()
+      date: dayjs().toDate(),
     };
   }
 
   async fetchWorldEquity(): Promise<EquityType[]> {
-    return Object.values(CountryType).map(type => {
+    return Object.values(CountryType).map((type) => {
       return {
         country: type,
         change: random(-0.3, 0.3),
         lastPrice: random(1, 100),
-        volume: random(100, 1000)
+        volume: random(100, 1000),
       };
     });
-
   }
 
   fetchMapPerformance(): Promise<TreeMapType[]> {
     return builder.buildMapPerformance();
   }
 
-
-  async fetchTopIndustries(countries: string[], period: string): Promise<TopIndustriesDataType> {
+  async fetchTopIndustries(
+    countries: string[],
+    period: string,
+  ): Promise<TopIndustriesDataType> {
     const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
       country = countries[randomInt(0, countries.length)];
     }
 
-    const values: TopIndustriesType[] = Object.values(SectorType).map((type) => {
-      return {
-        type,
-        country,
-        change: p * random(0.5, 0.9)
-      }
-    });
+    const values: TopIndustriesType[] = Object.values(SectorType).map(
+      (type) => {
+        return {
+          type,
+          country,
+          change: p * random(0.5, 0.9),
+        };
+      },
+    );
 
     return {
-      items: take(orderBy(values, ['change'], ['asc']), 5),
-      date: dayjs().toDate()
+      items: take(orderBy(values, ["change"], ["asc"]), 5),
+      date: dayjs().toDate(),
     };
   }
 
-  async fetchWorstIndustries(countries: string[], period: string): Promise<WorstIndustriesDataType> {
+  async fetchWorstIndustries(
+    countries: string[],
+    period: string,
+  ): Promise<WorstIndustriesDataType> {
     const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
       country = countries[randomInt(0, countries.length)];
     }
 
-    const values: WorstIndustriesType[] = Object.values(SectorType).map((sector) => {
-      return {
-        type: sector,
-        country,
-        change: p * random(-0.5, -0.1)
-      }
-    });
+    const values: WorstIndustriesType[] = Object.values(SectorType).map(
+      (sector) => {
+        return {
+          type: sector,
+          country,
+          change: p * random(-0.5, -0.1),
+        };
+      },
+    );
 
     return {
-      items: take(orderBy(values, ['change'], ['asc']), 5),
-      date: dayjs().toDate()
+      items: take(orderBy(values, ["change"], ["asc"]), 5),
+      date: dayjs().toDate(),
     };
   }
 
-  async fetchGainers(countries: string[], period?: string): Promise<GainersDataType> {
+  async fetchGainers(
+    countries: string[],
+    period?: string,
+  ): Promise<GainersDataType> {
     const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
@@ -143,26 +224,30 @@ export class MiscRepository implements IMiscRepository {
     }
 
     const buildGainers = () => {
-      const nextRandom = (min: number = 0.1, max: number = 0.5) => random(min, max) * p;
+      const nextRandom = (min: number = 0.1, max: number = 0.5) =>
+        random(min, max) * p;
 
       const values = Object.values(SectorType).map((type) => {
         return {
           type,
           change: nextRandom(),
-          country
-        }
-      })
+          country,
+        };
+      });
 
-      return take(orderBy(values, ['change'], ['desc']), 5);
-    }
+      return take(orderBy(values, ["change"], ["desc"]), 5);
+    };
 
     return {
       items: buildGainers(),
-      date: dayjs().toDate()
-    }
+      date: dayjs().toDate(),
+    };
   }
 
-  async fetchLosers(countries: string[], period?: string): Promise<LosersDataType> {
+  async fetchLosers(
+    countries: string[],
+    period?: string,
+  ): Promise<LosersDataType> {
     const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
@@ -170,33 +255,33 @@ export class MiscRepository implements IMiscRepository {
     }
 
     const buildLosers = () => {
-      const nextRandom = (min: number = -0.5, max: number = -0.1) => random(min, max) * p;
+      const nextRandom = (min: number = -0.5, max: number = -0.1) =>
+        random(min, max) * p;
 
       const values = Object.values(SectorType).map((type) => {
         return {
           type,
           country,
           change: nextRandom(),
-        }
-      })
+        };
+      });
 
-      return take(orderBy(values, ['change'], ['asc']), 5)
-    }
+      return take(orderBy(values, ["change"], ["asc"]), 5);
+    };
 
     return {
       items: buildLosers(),
-      date: dayjs().toDate()
-    }
+      date: dayjs().toDate(),
+    };
   }
-
 }
 
 function createEtfs() {
   return [
-    {id: "1", name: "ETF A"},
-    {id: "2", name: "ETF B"},
-    {id: "3", name: "ETF C"},
-    {id: "4", name: "ETF D"},
-    {id: "5", name: "ETF E"},
-  ]
+    { id: "1", name: "ETF A" },
+    { id: "2", name: "ETF B" },
+    { id: "3", name: "ETF C" },
+    { id: "4", name: "ETF D" },
+    { id: "5", name: "ETF E" },
+  ];
 }

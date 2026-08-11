@@ -1,8 +1,13 @@
-import {LazyPortfolioType, PortfolioPerformanceType, PortfoliosAreaType, PortfolioType} from "@/shared/types";
+import {
+  LazyPortfolioType,
+  PortfolioPerformanceType,
+  PortfoliosAreaType,
+  PortfolioType,
+} from "@/shared/types";
 
-import {random} from "es-toolkit";
-import {LoremIpsum} from "lorem-ipsum";
-import {IPortfolioRepository} from "@/app/database/interfaces/i-portfolio-repository";
+import { random } from "es-toolkit";
+import { LoremIpsum } from "lorem-ipsum";
+import { IPortfolioRepository } from "@/app/database/interfaces/i-portfolio-repository";
 
 const lorem = new LoremIpsum();
 
@@ -10,36 +15,41 @@ export class PortfolioRepository implements IPortfolioRepository {
   private readonly portfolios = createPortfolios();
   private readonly lazyPortfolios = createLazyPortfolios();
 
-  async fetchLazyPortfolioById(id: number): Promise<LazyPortfolioType | undefined> {
-    return this.lazyPortfolios.find(p => p.id === id);
+  async fetchLazyPortfolioById(
+    id: number,
+  ): Promise<LazyPortfolioType | undefined> {
+    return this.lazyPortfolios.find((p) => p.id === id);
   }
 
-  async fetchLazyPortfolios(pageNumber: number = 1, pageSize: number = 5): Promise<[number, LazyPortfolioType[]]> {
+  async fetchLazyPortfolios(
+    pageNumber: number = 1,
+    pageSize: number = 5,
+  ): Promise<[number, LazyPortfolioType[]]> {
     const values = this.lazyPortfolios;
 
     return [
       values.length,
-      values.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
+      values.slice((pageNumber - 1) * pageSize, pageNumber * pageSize),
     ];
   }
 
   async fetchPortfoliosPerformance(): Promise<PortfolioPerformanceType[]> {
-    return this.portfolios.map(p => {
+    return this.portfolios.map((p) => {
       return {
         id: p.id,
         portfolioName: p.name,
         "7d": random(0, 1),
-        "1y": random(-1, 1)
-      }
-    })
+        "1y": random(-1, 1),
+      };
+    });
   }
 
   async fetchPortfolioById(id: string): Promise<PortfolioType | undefined> {
-    return this.portfolios.find((p) => p.id === id)
+    return this.portfolios.find((p) => p.id === id);
   }
 
   async fetchPortfolios(): Promise<PortfolioType[]> {
-    return this.portfolios.map(({name, id}) => ({
+    return this.portfolios.map(({ name, id }) => ({
       id,
       name: name,
       description: lorem.generateSentences(2),
@@ -47,45 +57,60 @@ export class PortfolioRepository implements IPortfolioRepository {
       unrealizedGain: random(100, 300),
       createdAt: new Date(),
       holdings: 3,
-      assets: []
+      assets: [],
     }));
   }
 
   async fetchPortfoliosArea(portfolioId?: string): Promise<PortfoliosAreaType> {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
 
     let filteredPortfolios = this.portfolios;
     if (portfolioId) {
-      filteredPortfolios = this.portfolios.filter((portfolio) => portfolio.id === portfolioId);
+      filteredPortfolios = this.portfolios.filter(
+        (portfolio) => portfolio.id === portfolioId,
+      );
     }
 
     const performance = months.map((month) => {
       return {
         month: month,
-        portfolios: filteredPortfolios.map(p => {
+        portfolios: filteredPortfolios.map((p) => {
           return {
             name: p.name,
-            performance: random(-5, 10).toFixed(2)
-          }
-        })
-      }
-    })
+            performance: random(-5, 10).toFixed(2),
+          };
+        }),
+      };
+    });
 
     return {
-      portfolios: filteredPortfolios.map(p => p.name),
-      performance
+      portfolios: filteredPortfolios.map((p) => p.name),
+      performance,
     };
   }
 }
 
 function createPortfolios() {
   return [
-    {id: "1", name: "Growth"},
-    {id: "2", name: "Energetic"},
-    {id: "3", name: "Smooth"},
-    {id: "4", name: "Calm"},
-    {id: "5", name: "Protective"},
-  ]
+    { id: "1", name: "Growth" },
+    { id: "2", name: "Energetic" },
+    { id: "3", name: "Smooth" },
+    { id: "4", name: "Calm" },
+    { id: "5", name: "Protective" },
+  ];
 }
 
 function createLazyPortfolios(): LazyPortfolioType[] {
@@ -93,7 +118,8 @@ function createLazyPortfolios(): LazyPortfolioType[] {
     {
       id: 1,
       name: "Ray Dalio All Weather Portfolio",
-      description: "The Ray Dalio All Weather Portfolio can be implemented with 5 ETFs. This portfolio has a medium risk, signifying moderate fluctuations in value. It is suitable for investors with a balanced approach to risk and return, seeking steady growth while tolerating some level of volatility.",
+      description:
+        "The Ray Dalio All Weather Portfolio can be implemented with 5 ETFs. This portfolio has a medium risk, signifying moderate fluctuations in value. It is suitable for investors with a balanced approach to risk and return, seeking steady growth while tolerating some level of volatility.",
       "1d": 0.1,
       ytd: 0.3,
       maxDrawdown: 1,
@@ -141,13 +167,14 @@ function createLazyPortfolios(): LazyPortfolioType[] {
           ticker: "GLD",
           themes: "Commodity, Gold",
           type: "c",
-        }
-      ]
+        },
+      ],
     },
     {
       id: 2,
       name: "Warren Buffett Portfolio",
-      description: "The Warren Buffett Portfolio can be implemented with 2 ETFs. This portfolio has a very high risk, meaning it can experience significant fluctuations in value. It is suitable for investors with a high risk tolerance who are seeking substantial returns and can withstand large drawdowns.",
+      description:
+        "The Warren Buffett Portfolio can be implemented with 2 ETFs. This portfolio has a very high risk, meaning it can experience significant fluctuations in value. It is suitable for investors with a high risk tolerance who are seeking substantial returns and can withstand large drawdowns.",
       "1d": 0.01,
       ytd: 0.3,
       maxDrawdown: 1,
@@ -171,13 +198,14 @@ function createLazyPortfolios(): LazyPortfolioType[] {
           ticker: "SHY",
           themes: "Bond US, Long Term",
           type: "f",
-        }
-      ]
+        },
+      ],
     },
     {
       id: 3,
       name: "Tyler Golden Butterfly Portfolio",
-      description: "The Tyler Golden Butterfly Portfolio can be implemented with 5 ETFs. This portfolio has a high risk, indicating it can undergo considerable value changes. It is appropriate for investors with a high risk tolerance who are aiming for higher returns and can handle notable drawdowns.",
+      description:
+        "The Tyler Golden Butterfly Portfolio can be implemented with 5 ETFs. This portfolio has a high risk, indicating it can undergo considerable value changes. It is appropriate for investors with a high risk tolerance who are aiming for higher returns and can handle notable drawdowns.",
       "1d": 0.02,
       ytd: 0.3,
       maxDrawdown: 1,
@@ -225,8 +253,8 @@ function createLazyPortfolios(): LazyPortfolioType[] {
           ticker: "GLD",
           themes: "Commodity, Gold",
           type: "c",
-        }
-      ]
+        },
+      ],
     },
     {
       id: 4,
@@ -263,13 +291,14 @@ function createLazyPortfolios(): LazyPortfolioType[] {
           ticker: "BND",
           themes: "Bond US, Long Term",
           type: "f",
-        }
-      ]
+        },
+      ],
     },
     {
       id: 5,
       name: "Cathie Wood Ark Tech Portfolio",
-      description: "The Cathie Wood Ark Tech Portfolio can be implemented with 4 ETFs. This portfolio has a very high risk, meaning it can experience significant fluctuations in value. It is suitable for investors with a high risk tolerance who are seeking substantial returns and can withstand large drawdowns.",
+      description:
+        "The Cathie Wood Ark Tech Portfolio can be implemented with 4 ETFs. This portfolio has a very high risk, meaning it can experience significant fluctuations in value. It is suitable for investors with a high risk tolerance who are seeking substantial returns and can withstand large drawdowns.",
       "1d": -0.01,
       ytd: 0.2,
       maxDrawdown: 1,
@@ -310,12 +339,13 @@ function createLazyPortfolios(): LazyPortfolioType[] {
           themes: "Equity US, Large Cap",
           type: "s",
         },
-      ]
+      ],
     },
     {
       id: 6,
       name: "Davide Pisicchio Diavola Portfolio",
-      description: "The Davide Pisicchio Diavola Portfolio can be implemented with 4 ETFs. This portfolio has a very high risk, meaning it can experience significant fluctuations in value. It is suitable for investors with a high risk tolerance who are seeking substantial returns and can withstand large drawdowns.",
+      description:
+        "The Davide Pisicchio Diavola Portfolio can be implemented with 4 ETFs. This portfolio has a very high risk, meaning it can experience significant fluctuations in value. It is suitable for investors with a high risk tolerance who are seeking substantial returns and can withstand large drawdowns.",
       "1d": 0.2,
       ytd: -0.3,
       maxDrawdown: 1,
@@ -356,12 +386,13 @@ function createLazyPortfolios(): LazyPortfolioType[] {
           themes: "Bond US, Short Term",
           type: "s",
         },
-      ]
+      ],
     },
     {
       id: 7,
       name: "Developed World ex-US 20/80 Portfolio",
-      description: "The Developed World ex-US 20/80 Portfolio can be implemented with 2 ETFs. This portfolio has a low risk, suggesting it experiences minor value changes. It is ideal for conservative investors who prioritize capital preservation and prefer stable, predictable returns.",
+      description:
+        "The Developed World ex-US 20/80 Portfolio can be implemented with 2 ETFs. This portfolio has a low risk, suggesting it experiences minor value changes. It is ideal for conservative investors who prioritize capital preservation and prefer stable, predictable returns.",
       "1d": 0.1,
       ytd: 0.4,
       maxDrawdown: 1,
@@ -386,12 +417,13 @@ function createLazyPortfolios(): LazyPortfolioType[] {
           themes: "Equity US, Large Cap",
           type: "f",
         },
-      ]
+      ],
     },
     {
       id: 8,
       name: "Scott Burns Couch Potato Portfolio",
-      description: "The Scott Burns Couch Potato Portfolio can be implemented with 2 ETFs. This portfolio has a medium risk, signifying moderate fluctuations in value. It is suitable for investors with a balanced approach to risk and return, seeking steady growth while tolerating some level of volatility.",
+      description:
+        "The Scott Burns Couch Potato Portfolio can be implemented with 2 ETFs. This portfolio has a medium risk, signifying moderate fluctuations in value. It is suitable for investors with a balanced approach to risk and return, seeking steady growth while tolerating some level of volatility.",
       "1d": 0.01,
       ytd: 0.1,
       maxDrawdown: 1,
@@ -415,8 +447,8 @@ function createLazyPortfolios(): LazyPortfolioType[] {
           ticker: "TIP",
           themes: "Bond US, Long Term",
           type: "f",
-        }
-      ]
+        },
+      ],
     },
   ];
 }

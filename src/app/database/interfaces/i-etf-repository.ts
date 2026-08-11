@@ -1,4 +1,4 @@
-import {EtfThemeByIdType, EtfThemeType} from "@/shared/types";
+import { EtfThemeByIdType, EtfThemeType } from "@/shared/types";
 
 export interface IEtfRepository {
   fetchEtfs(): Promise<EtfThemeType[]>;

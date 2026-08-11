@@ -1,17 +1,21 @@
-"use client"
+"use client";
 
-import { Chart, useChart } from "@chakra-ui/charts"
-import {Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis} from "recharts"
+import { Chart, useChart } from "@chakra-ui/charts";
+import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 
 export type PortfoliosBarChartType = {
   name: string;
   performance: number;
-}
+};
 
-export const PortfoliosBarChart = ({portfolios}: {portfolios: PortfoliosBarChartType[]}) => {
+export const PortfoliosBarChart = ({
+  portfolios,
+}: {
+  portfolios: PortfoliosBarChartType[];
+}) => {
   const chart = useChart({
-    data
-  })
+    data,
+  });
 
   return (
     <Chart.Root maxH="sm" chart={chart}>
@@ -32,8 +36,8 @@ export const PortfoliosBarChart = ({portfolios}: {portfolios: PortfoliosBarChart
         <Tooltip
           formatter={(value) => [`${value}`, "Frequency"]}
           labelFormatter={(label) => {
-            const bin = data.find((item) => item.from === Number(label))
-            return bin ? `Range: ${bin.from}-${bin.to}` : ""
+            const bin = data.find((item) => item.from === Number(label));
+            return bin ? `Range: ${bin.from}-${bin.to}` : "";
           }}
         />
         <Bar
@@ -43,8 +47,8 @@ export const PortfoliosBarChart = ({portfolios}: {portfolios: PortfoliosBarChart
         />
       </BarChart>
     </Chart.Root>
-  )
-}
+  );
+};
 
 const data = [
   { from: 0, to: 10, value: 0 },
@@ -80,6 +84,6 @@ const data = [
   { from: 300, to: 310, value: 40 },
   { from: 310, to: 320, value: 20 },
   { from: 320, to: 330, value: 0 },
-]
+];
 
-const ticks = Array.from({ length: 12 }, (_, i) => i * 30)
+const ticks = Array.from({ length: 12 }, (_, i) => i * 30);

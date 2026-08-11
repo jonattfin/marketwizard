@@ -1,7 +1,15 @@
-import {LazyPortfolioType, PortfolioPerformanceType, PortfoliosAreaType, PortfolioType} from "@/shared/types";
+import {
+  LazyPortfolioType,
+  PortfolioPerformanceType,
+  PortfoliosAreaType,
+  PortfolioType,
+} from "@/shared/types";
 
 export interface IPortfolioRepository {
-  fetchLazyPortfolios(pageNumber: number, pageSize: number): Promise<[number, LazyPortfolioType[]]>;
+  fetchLazyPortfolios(
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<[number, LazyPortfolioType[]]>;
 
   fetchLazyPortfolioById(id: number): Promise<LazyPortfolioType | undefined>;
 

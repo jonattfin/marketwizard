@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Chart, useChart } from "@chakra-ui/charts"
+import { Chart, useChart } from "@chakra-ui/charts";
 import {
   CartesianGrid,
   Legend,
@@ -11,8 +11,8 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts"
-import {random} from "es-toolkit";
+} from "recharts";
+import { random } from "es-toolkit";
 
 const nextValue = () => random(4, 100);
 
@@ -33,9 +33,9 @@ const Demo = () => {
       { name: "thisYear", color: "teal.solid", label: "This Year" },
       { name: "lastYear", color: "gray.emphasized", label: "Last Year" },
     ],
-  })
+  });
 
-  const latest = chart.data.findLast((item) => item.thisYear !== null)
+  const latest = chart.data.findLast((item) => item.thisYear !== null);
 
   return (
     <Chart.Root maxH="sm" chart={chart}>
@@ -89,7 +89,7 @@ const Demo = () => {
         ))}
       </LineChart>
     </Chart.Root>
-  )
-}
+  );
+};
 
 export default Demo;

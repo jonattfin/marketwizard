@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import {Chart, useChart} from "@chakra-ui/charts"
+import { Chart, useChart } from "@chakra-ui/charts";
 import {
   Area,
   AreaChart,
@@ -10,30 +10,30 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts"
-import {useQuery} from "@tanstack/react-query";
-import {IndicesAreaType, IndiceSummaryType} from "@/shared/types"
+} from "recharts";
+import { useQuery } from "@tanstack/react-query";
+import { IndicesAreaType, IndiceSummaryType } from "@/shared/types";
 import Loading from "@/shared/loading";
 import { useMemo } from "react";
 
 const useIndicesYearly = () => {
-  const {isPending, error, data} = useQuery<IndicesAreaType>({
+  const { isPending, error, data } = useQuery<IndicesAreaType>({
     queryKey: ["indicesArea"],
     queryFn: async () => {
       const response = await fetch("/api/dashboard/yearly");
       return await response.json();
-    }
+    },
   });
 
-  return {data, error, isPending};
-}
+  return { data, error, isPending };
+};
 
 export type IndicesYearlyType = {
   indice?: IndiceSummaryType;
-}
+};
 
-const IndicesYearly = ({indice}: IndicesYearlyType) => {
-  const {data, error, isPending} = useIndicesYearly()
+const IndicesYearly = ({ indice }: IndicesYearlyType) => {
+  const { data, error, isPending } = useIndicesYearly();
 
   const chartData = useMemo(() => {
     const items: Record<string, number | string>[] = [];
@@ -50,11 +50,10 @@ const IndicesYearly = ({indice}: IndicesYearlyType) => {
         } else {
           obj[`${indiceItem.name}`] = String(indiceItem.performance);
         }
-
-      })
+      });
 
       items.push(obj);
-    })
+    });
 
     return items;
   }, [data?.performance, indice]);
@@ -69,7 +68,7 @@ const IndicesYearly = ({indice}: IndicesYearlyType) => {
       else if (index === 3) return "yellow.solid";
 
       return "blue.solid";
-    }
+    };
 
     data?.indices.forEach((indiceItem, index) => {
       if (indice) {
@@ -77,33 +76,32 @@ const IndicesYearly = ({indice}: IndicesYearlyType) => {
           series.push({
             name: indiceItem,
             color: buildColor(index),
-          })
+          });
         }
       } else {
         series.push({
           name: indiceItem,
           color: buildColor(index),
-        })
+        });
       }
-
-    })
+    });
 
     return series;
-  }, [data?.indices, indice])
+  }, [data?.indices, indice]);
 
   const chart = useChart({
     data: chartData,
-    series: chartSeries
-  })
+    series: chartSeries,
+  });
 
-  if (isPending) return <Loading/>;
+  if (isPending) return <Loading />;
   if (error) return `Page ${error}`;
 
   return (
     <Chart.Root maxH="sm" chart={chart}>
       <AreaChart data={chart.data}>
-        <CartesianGrid stroke={chart.color("border.muted")} vertical={false}/>
-        <YAxis stroke={chart.color("border")}/>
+        <CartesianGrid stroke={chart.color("border.muted")} vertical={false} />
+        <YAxis stroke={chart.color("border")} />
         <XAxis
           axisLine={false}
           tickLine={false}
@@ -113,15 +111,15 @@ const IndicesYearly = ({indice}: IndicesYearlyType) => {
         <Tooltip
           cursor={false}
           animationDuration={100}
-          content={<Chart.Tooltip/>}
+          content={<Chart.Tooltip />}
         />
-        <Legend content={<Chart.Legend/>}/>
+        <Legend content={<Chart.Legend />} />
         <ReferenceLine
           x="Mar"
           label={{
             value: "Trump Tariff's",
             position: "insideTopRight",
-            style: {fill: chart.color("red.fg"), fontWeight: "500"},
+            style: { fill: chart.color("red.fg"), fontWeight: "500" },
           }}
           stroke={chart.color("red.solid")}
         />
@@ -138,7 +136,7 @@ const IndicesYearly = ({indice}: IndicesYearlyType) => {
         ))}
       </AreaChart>
     </Chart.Root>
-  )
-}
+  );
+};
 
 export default IndicesYearly;

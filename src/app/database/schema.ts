@@ -9,5 +9,5 @@ export const cronJobsTable = pgTable("cron_jobs", {
   losers: json(),
   top_industries: json(),
   worst_industries: json(),
-  updated_at: timestamp()
+  updated_at: timestamp(),
 });

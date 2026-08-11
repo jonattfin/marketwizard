@@ -1,4 +1,8 @@
-import {WatchlistItemType, WatchListPageType, WatchListType} from "@/shared/types";
+import {
+  WatchlistItemType,
+  WatchListPageType,
+  WatchListType,
+} from "@/shared/types";
 
 export interface IWatchlistRepository {
   fetchWatchlist(cursor: string): Promise<WatchListPageType>;
@@ -9,7 +13,13 @@ export interface IWatchlistRepository {
 
   deleteWatchlist(id: string): Promise<void>;
 
-  createWatchlistItem(watchlistId: string, symbol: string): Promise<WatchlistItemType>;
+  createWatchlistItem(
+    watchlistId: string,
+    symbol: string,
+  ): Promise<WatchlistItemType>;
 
-  deleteWatchlistItem(watchlistId: string, watchlistItemId: string): Promise<void>;
+  deleteWatchlistItem(
+    watchlistId: string,
+    watchlistItemId: string,
+  ): Promise<void>;
 }

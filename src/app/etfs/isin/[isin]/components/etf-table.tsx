@@ -24,8 +24,8 @@ export const EtfTable = () => {
         </Table.Row>
       </Table.Body>
     </Table.Root>
-  )
-}
+  );
+};
 
 export const item = {
   isin: "IE000YYE6WK5",
@@ -37,5 +37,5 @@ export const item = {
   fundDomicile: "Ireland",
   replicationMethod: "Full replication",
   inceptionDate: "2021-01-01",
-  holdings: 32
+  holdings: 32,
 };

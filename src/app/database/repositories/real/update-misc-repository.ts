@@ -1,10 +1,10 @@
-import {IMiscRepository} from "@/app/database/interfaces/i-misc-repository";
+import { IMiscRepository } from "@/app/database/interfaces/i-misc-repository";
 
-import {drizzle,} from 'drizzle-orm/neon-http';
-import {cronJobsTable} from "../../schema";
+import { drizzle } from "drizzle-orm/neon-http";
+import { cronJobsTable } from "../../schema";
 
-import {eq} from "drizzle-orm";
-import {IndicePerformanceDataType, TopNewsDataType} from "@/shared/types";
+import { eq } from "drizzle-orm";
+import { IndicePerformanceDataType, TopNewsDataType } from "@/shared/types";
 
 export class UpdateMiscRepository {
   private readonly repository: IMiscRepository;
@@ -14,22 +14,20 @@ export class UpdateMiscRepository {
   }
 
   public async updateAll() {
-    await Promise.all(
-      [
-        this.updateTopNews(),
-        this.updateIndicesPerformance(),
-        this.updateSectorPerformance(),
-        this.updateWorstIndustries(),
-        this.updateGainers(),
-        this.updateLosers(),
-        this.updateTopIndustries(),
-      ]
-    )
+    await Promise.all([
+      this.updateTopNews(),
+      this.updateIndicesPerformance(),
+      this.updateSectorPerformance(),
+      this.updateWorstIndustries(),
+      this.updateGainers(),
+      this.updateLosers(),
+      this.updateTopIndustries(),
+    ]);
   }
 
   private async updateTopNews() {
     const news = await this.repository.fetchTopNews([]);
-    await executeQuery("top_news", this.buildObject(news))
+    await executeQuery("top_news", this.buildObject(news));
   }
 
   private async updateIndicesPerformance() {
@@ -76,11 +74,13 @@ const executeQuery = async (column: string, value: unknown) => {
   const db = drizzle(process.env.DATABASE_URL!);
 
   try {
-    await db.update(cronJobsTable).set({[column]: value}).where(eq(cronJobsTable.id, 1));
+    await db
+      .update(cronJobsTable)
+      .set({ [column]: value })
+      .where(eq(cronJobsTable.id, 1));
 
     console.log("Updated " + column);
-
   } catch (e) {
     console.error("Failed to update table: " + column + ". Error: " + e);
   }
-}
+};

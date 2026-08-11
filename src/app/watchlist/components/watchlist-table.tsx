@@ -1,51 +1,64 @@
-'use client';
+"use client";
 
-import {WatchListType} from "@/shared/types";
-import {Button, ButtonGroup, Flex, IconButton, Input, Popover, Portal, Stack, Table} from "@chakra-ui/react";
-import {useState} from "react";
-import {LuPencilOff, LuCirclePlus} from "react-icons/lu";
-import {Tooltip} from "@/components/ui/tooltip";
-import {useMutation} from "@tanstack/react-query";
-import {queryClient} from "@/shared/queryClient";
-import {toaster} from "@/components/ui/toaster";
+import { WatchListType } from "@/shared/types";
+import {
+  Button,
+  ButtonGroup,
+  Flex,
+  IconButton,
+  Input,
+  Popover,
+  Portal,
+  Stack,
+  Table,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { LuPencilOff, LuCirclePlus } from "react-icons/lu";
+import { Tooltip } from "@/components/ui/tooltip";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/shared/queryClient";
+import { toaster } from "@/components/ui/toaster";
 
 export type WatchlistTableType = {
   watchlist: WatchListType;
-}
+};
 
-export const WatchlistTable = ({watchlist}: WatchlistTableType) => {
+export const WatchlistTable = ({ watchlist }: WatchlistTableType) => {
   const [ticker, setTicker] = useState<string>("");
   const [open, setOpen] = useState(false);
 
   const useCreateWatchlistItem = useMutation({
-    mutationFn: async (watchlistItem: { watchlistId: string, ticker: string }) => {
+    mutationFn: async (watchlistItem: {
+      watchlistId: string;
+      ticker: string;
+    }) => {
       const response = await fetch("/api/watchlists/items", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(watchlistItem)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(watchlistItem),
       });
       return await response.json();
-    }
-  })
+    },
+  });
 
   const useDeleteWatchlistItem = useMutation({
-    mutationFn: async (watchlist: { id: string, itemId: string }) => {
+    mutationFn: async (watchlist: { id: string; itemId: string }) => {
       const response = await fetch("/api/watchlists/items", {
         method: "DELETE",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(watchlist)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(watchlist),
       });
       return await response.json();
-    }
-  })
+    },
+  });
 
   const handleCreate = async (watchlistId: string, ticker: string) => {
     try {
       await useCreateWatchlistItem.mutateAsync({
         watchlistId,
-        ticker
+        ticker,
       });
-      await queryClient.invalidateQueries({queryKey: ["watchlists"]});
+      await queryClient.invalidateQueries({ queryKey: ["watchlists"] });
 
       setTicker("");
       setOpen(false);
@@ -53,40 +66,38 @@ export const WatchlistTable = ({watchlist}: WatchlistTableType) => {
       toaster.create({
         title: `Watchlist item created successfully!`,
         type: "success",
-      })
-
+      });
     } catch (e) {
       toaster.create({
         title: `Watchlist item creation failed!`,
         type: "success",
-      })
+      });
 
       console.error(e);
     }
-  }
+  };
 
   const handleDelete = async (id: string, itemId: string) => {
     try {
       await useDeleteWatchlistItem.mutateAsync({
         id,
-        itemId
+        itemId,
       });
-      await queryClient.invalidateQueries({queryKey: ["watchlists"]});
+      await queryClient.invalidateQueries({ queryKey: ["watchlists"] });
 
       toaster.create({
         title: `Watchlist item deleted successfully!`,
         type: "success",
-      })
-
+      });
     } catch (e) {
       toaster.create({
         title: `Watchlist item delete failed!`,
         type: "success",
-      })
+      });
 
       console.error(e);
     }
-  }
+  };
 
   return (
     <Stack>
@@ -106,12 +117,16 @@ export const WatchlistTable = ({watchlist}: WatchlistTableType) => {
               <Table.Cell textAlign="end">
                 <Flex gap="4" justify="flex-end">
                   <ButtonGroup size="sm" variant="outline">
-                    <IconButton size={"sm"} variant={"outline"} color={"red.300"}
-                                onClick={async () => {
-                                  await handleDelete(watchlist.id, item.id)
-                                }}>
+                    <IconButton
+                      size={"sm"}
+                      variant={"outline"}
+                      color={"red.300"}
+                      onClick={async () => {
+                        await handleDelete(watchlist.id, item.id);
+                      }}
+                    >
                       <Tooltip content="Delete item">
-                        <LuPencilOff/>
+                        <LuPencilOff />
                       </Tooltip>
                     </IconButton>
                   </ButtonGroup>
@@ -126,20 +141,31 @@ export const WatchlistTable = ({watchlist}: WatchlistTableType) => {
         <Popover.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
           <Popover.Trigger asChild>
             <Button size="sm" variant="outline">
-              <LuCirclePlus/>Add item
+              <LuCirclePlus />
+              Add item
             </Button>
           </Popover.Trigger>
           <Portal>
             <Popover.Positioner>
               <Popover.Content>
-                <Popover.Arrow/>
+                <Popover.Arrow />
                 <Popover.Body>
-                  <Input placeholder="Asset name" size="sm" value={ticker}
-                         onChange={e => setTicker(e.target.value)}/>
-                  <Button mt="4" size="sm" variant="outline"
-                          onClick={async () => {
-                            await handleCreate(watchlist.id, ticker);
-                          }}>Create</Button>
+                  <Input
+                    placeholder="Asset name"
+                    size="sm"
+                    value={ticker}
+                    onChange={(e) => setTicker(e.target.value)}
+                  />
+                  <Button
+                    mt="4"
+                    size="sm"
+                    variant="outline"
+                    onClick={async () => {
+                      await handleCreate(watchlist.id, ticker);
+                    }}
+                  >
+                    Create
+                  </Button>
                 </Popover.Body>
               </Popover.Content>
             </Popover.Positioner>
@@ -147,5 +173,5 @@ export const WatchlistTable = ({watchlist}: WatchlistTableType) => {
         </Popover.Root>
       </Flex>
     </Stack>
-  )
-}
+  );
+};

@@ -1,9 +1,5 @@
 import dayjs from "dayjs";
-import {
-  Text,
-  Flex,
-  Badge
-} from "@chakra-ui/react";
+import { Text, Flex, Badge } from "@chakra-ui/react";
 
 export const lastUpdatedAt = (date?: Date) => {
   const updatedAt = dayjs(date).format("MMM D, YYYY h:mm A");
@@ -16,8 +12,18 @@ export const lastUpdatedAt = (date?: Date) => {
         </Badge>
       </Text>
     </Flex>
-  )
-}
+  );
+};
 
-
-export const COUNTRY_CODES = ["AUS", "CHN", "DEU", "ESP", "FRA", "GBR", "IND", "JPN", "KOR", "USA"]
+export const COUNTRY_CODES = [
+  "AUS",
+  "CHN",
+  "DEU",
+  "ESP",
+  "FRA",
+  "GBR",
+  "IND",
+  "JPN",
+  "KOR",
+  "USA",
+];

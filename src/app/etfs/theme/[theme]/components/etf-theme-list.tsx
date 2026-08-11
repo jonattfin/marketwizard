@@ -1,34 +1,43 @@
-'use client';
+"use client";
 
-import {Breadcrumb, ButtonGroup, Center, Grid, GridItem, IconButton, Image, Pagination, Table} from "@chakra-ui/react"
+import {
+  Breadcrumb,
+  ButtonGroup,
+  Center,
+  Grid,
+  GridItem,
+  IconButton,
+  Image,
+  Pagination,
+  Table,
+} from "@chakra-ui/react";
 
 import Link from "next/link";
-import {useQuery} from "@tanstack/react-query";
-import {EtfThemeByIdType} from "@/shared/types";
+import { useQuery } from "@tanstack/react-query";
+import { EtfThemeByIdType } from "@/shared/types";
 import Loading from "@/shared/loading";
-import {LuChevronLeft, LuChevronRight} from "react-icons/lu";
+import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 export type EtfThemeListProps = {
-  theme: string
-}
+  theme: string;
+};
 
 const useEtfTheme = (theme: string) => {
-  const {isPending, error, data} = useQuery<EtfThemeByIdType>({
+  const { isPending, error, data } = useQuery<EtfThemeByIdType>({
     queryKey: ["etf-theme", theme],
     queryFn: async () => {
       const response = await fetch(`/api/etfs//${theme}`);
       return await response.json();
-    }
+    },
   });
 
-  return {isPending, error, data: data};
-}
+  return { isPending, error, data: data };
+};
 
+export default function EtfThemeList({ theme }: Readonly<EtfThemeListProps>) {
+  const { isPending, error, data: etf } = useEtfTheme(theme);
 
-export default function EtfThemeList({theme}: Readonly<EtfThemeListProps>) {
-  const {isPending, error, data: etf} = useEtfTheme(theme)
-
-  if (isPending) return <Loading/>;
+  if (isPending) return <Loading />;
   if (error || !etf) return `Page ${error}`;
 
   return (
@@ -38,9 +47,9 @@ export default function EtfThemeList({theme}: Readonly<EtfThemeListProps>) {
           <Breadcrumb.Item>
             <Breadcrumb.Link href="/">Home</Breadcrumb.Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Separator/>
+          <Breadcrumb.Separator />
           <Breadcrumb.Link href="/etfs">ETFs</Breadcrumb.Link>
-          <Breadcrumb.Separator/>
+          <Breadcrumb.Separator />
           <Breadcrumb.Item>
             <Breadcrumb.CurrentLink>{etf?.name}</Breadcrumb.CurrentLink>
           </Breadcrumb.Item>
@@ -48,20 +57,18 @@ export default function EtfThemeList({theme}: Readonly<EtfThemeListProps>) {
       </Breadcrumb.Root>
       <div>&nbsp;</div>
 
-      <Grid templateColumns={{
-        base: '1fr',
-        md: 'repeat(1, 1fr)',
-        lg: 'repeat(3, 1fr)'
-      }} gap="6">
+      <Grid
+        templateColumns={{
+          base: "1fr",
+          md: "repeat(1, 1fr)",
+          lg: "repeat(3, 1fr)",
+        }}
+        gap="6"
+      >
         <GridItem colSpan={1}>
-          <Image rounded="md"
-            src={etf?.imageUrl}
-            alt=""
-          />
+          <Image rounded="md" src={etf?.imageUrl} alt="" />
         </GridItem>
-        <GridItem colSpan={2}>
-          {etf?.description}
-        </GridItem>
+        <GridItem colSpan={2}>{etf?.description}</GridItem>
         <GridItem colSpan={2}></GridItem>
       </Grid>
 
@@ -95,18 +102,21 @@ export default function EtfThemeList({theme}: Readonly<EtfThemeListProps>) {
       <div>&nbsp;</div>
       <Center>
         <Pagination.Root
-          count={5} pageSize={5} page={1}
-          onPageChange={() => {}}>
+          count={5}
+          pageSize={5}
+          page={1}
+          onPageChange={() => {}}
+        >
           <ButtonGroup variant="ghost" size="sm" wrap="wrap">
             <Pagination.PrevTrigger asChild>
               <IconButton>
-                <LuChevronLeft/>
+                <LuChevronLeft />
               </IconButton>
             </Pagination.PrevTrigger>
 
             <Pagination.Items
               render={(page) => (
-                <IconButton variant={{base: "ghost", _selected: "outline"}}>
+                <IconButton variant={{ base: "ghost", _selected: "outline" }}>
                   {page.value}
                 </IconButton>
               )}
@@ -114,12 +124,12 @@ export default function EtfThemeList({theme}: Readonly<EtfThemeListProps>) {
 
             <Pagination.NextTrigger asChild>
               <IconButton>
-                <LuChevronRight/>
+                <LuChevronRight />
               </IconButton>
             </Pagination.NextTrigger>
           </ButtonGroup>
         </Pagination.Root>
       </Center>
     </>
-  )
+  );
 }
