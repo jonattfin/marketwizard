@@ -130,7 +130,7 @@ export type IndicePerformanceType = {
   id: number;
   name: string;
   countryCode: string;
-  regularMarketChangePercent?: number;
+  regularMarketChangePercent: number;
   regularMarketPrice: number;
 };
 

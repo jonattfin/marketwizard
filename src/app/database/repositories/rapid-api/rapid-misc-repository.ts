@@ -87,8 +87,6 @@ export class RapidMiscRepository implements IMiscRepository {
     const url = getYahooFinanceUrl("v1/markets/news");
     const data = await fetchTyped<YahooFinanceNews>(url);
 
-    console.log("top news", data);
-
     if (!data) {
       return {
         items: [],

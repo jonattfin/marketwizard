@@ -32,9 +32,9 @@ export const IndicesTable = ({
             <Table.Row key={item.id}>
               <Table.Cell>{item.name}</Table.Cell>
               <Table.Cell>
-                <Tag.Root size="md" variant={"subtle"} colorPalette={(item.regularMarketChangePercent || 0) / 100  > 0 ? "green" : "orange"}>
+                <Tag.Root size="md" variant={"subtle"} colorPalette={item.regularMarketChangePercent > 0 ? "green" : "orange"}>
                   <Tag.Label><FormatNumber
-                    value={(item.regularMarketChangePercent || 0) / 100}
+                    value={item.regularMarketChangePercent}
                     style="percent"
                     maximumFractionDigits={2}
                     minimumFractionDigits={2}

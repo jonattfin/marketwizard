@@ -26,7 +26,7 @@ const links = [
   { name: "Lazy Portfolios", href: "/lazy-portfolios" },
   // {name: "User Portfolios", href: "/portfolios"},
   { name: "ETFs", href: "/etfs" },
-  { name: "Watchlist", href: "/watchlist" },
+  // { name: "Watchlist", href: "/watchlist" },
 ];
 
 const MenuLinks = ({ isMobile = false }) => {
