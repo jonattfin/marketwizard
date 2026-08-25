@@ -14,22 +14,20 @@ enum Environment {
 }
 
 class Factory {
-  getEnvironment(): Environment {
-    if (process.env.NODE_ENV === "development") {
-      return Environment.Development;
-    } else if (process.env.NODE_ENV === "production") {
-      return Environment.Production;
-    }
+  getEnvironment(): Environment | undefined {
+    // if (process.env.NODE_ENV === "development") {
+    //   return Environment.Development;
+    // } else if (process.env.NODE_ENV === "production") {
+    //   return Environment.Production;
+    // }
 
     return Environment.Development;
   }
 
   createMiscRepository() {
-    // return this.getEnvironment() === Environment.Development
-    //   ? new MiscRepository()
-    //   : new DbMiscRepository();
-
-    return new MiscRepository();
+    return this.getEnvironment() === Environment.Development
+      ? new MiscRepository()
+      : new DbMiscRepository();
   }
 
   createPortfolioRepository() {
