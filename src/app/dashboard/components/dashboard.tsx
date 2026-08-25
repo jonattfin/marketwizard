@@ -11,6 +11,7 @@ import News from "@/app/dashboard/components/news";
 import { CountryContext } from "@/shared/context/country-context";
 
 import { useCountries } from "@/shared/use-countries";
+import {ReactNode} from "react";
 
 export default function Dashboard() {
   const { countries, onCountryChanged } = useCountries();
@@ -90,7 +91,15 @@ export default function Dashboard() {
   );
 }
 
-function getLeftItems() {
+type ItemType = {
+  value: string;
+  icon: ReactNode;
+  title: string;
+  content: ReactNode;
+}
+
+
+function getLeftItems(): ItemType[] {
   return [
     {
       value: "performance-by-sector",
@@ -113,7 +122,7 @@ function getLeftItems() {
   ];
 }
 
-function getRightItems() {
+function getRightItems(): ItemType[] {
   return [
     // {
     //   value: "tree-maps",

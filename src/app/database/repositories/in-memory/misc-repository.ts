@@ -21,6 +21,8 @@ import dayjs from "dayjs";
 
 const lorem = new LoremIpsum();
 
+const getRandomPercentage = () => random(-1, 1);
+
 export class MiscRepository implements IMiscRepository {
   private readonly etfs = createEtfs();
 
@@ -36,7 +38,7 @@ export class MiscRepository implements IMiscRepository {
         text: lorem.generateSentences(1),
         date: Date.now(),
         country,
-        sentiment: Number.parseFloat(random(-1, 1).toPrecision(2)),
+        sentiment: Number.parseFloat(getRandomPercentage().toPrecision(2)),
         source: "Reuters",
         description: lorem.generateSentences(2),
       };
@@ -46,76 +48,77 @@ export class MiscRepository implements IMiscRepository {
   }
 
   async fetchIndicesPerformance(): Promise<IndicePerformanceDataType> {
+
     const values = [
       {
         id: 1,
         name: "S&P 500",
-        ytdPerformance: 0.12,
-        points: 6880,
+        regularMarketPrice: 6880,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "USA",
       },
       {
         id: 2,
         name: "Nikkei 225",
-        ytdPerformance: 0.14,
-        points: 43274,
+        regularMarketPrice: 43274,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "JPN",
       },
       {
         id: 3,
         name: "DAX",
-        ytdPerformance: 0.08,
-        points: 24189,
+        regularMarketPrice: 24189,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "DEU",
       },
       {
         id: 4,
         name: "FTSE 100",
-        ytdPerformance: 0.07,
-        points: 9165,
+        regularMarketPrice: 9165,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "GBR",
       },
       {
         id: 5,
         name: "Stoxx 50",
-        ytdPerformance: 0.06,
-        points: 5389,
+        regularMarketPrice: 5389,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "FRA",
       },
       {
         id: 6,
         name: "IBEX 35",
-        ytdPerformance: 0.05,
-        points: 15021,
+        regularMarketPrice: 15021,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "ESP",
       },
 
       {
         id: 7,
         name: "Shanghai Composite",
-        ytdPerformance: 0.03,
-        points: 3700,
+        regularMarketPrice: 3700,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "CHN",
       },
       {
         id: 8,
         name: "Sensex 30",
-        ytdPerformance: 0.15,
-        points: 67000,
+        regularMarketPrice: 67000,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "IND",
       },
       {
         id: 9,
         name: "ASX 200",
-        ytdPerformance: 0.05,
-        points: 7150,
+        regularMarketPrice: 7150,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "AUS",
       },
       {
         id: 10,
         name: "KOSPI",
-        ytdPerformance: 0.06,
-        points: 2760,
+        regularMarketPrice: 2760,
+        regularMarketChangePercent: getRandomPercentage(),
         countryCode: "KOR",
       },
     ];
@@ -136,7 +139,7 @@ export class MiscRepository implements IMiscRepository {
 
     const values = Object.values(SectorType).map((type) => ({
       type,
-      change: random(-0.1, 0.1),
+      change: getRandomPercentage(),
       country: country,
     }));
 
@@ -176,7 +179,7 @@ export class MiscRepository implements IMiscRepository {
         return {
           type,
           country,
-          change: p * random(0.5, 0.9),
+          change: random(0.5, 0.9),
         };
       },
     );
@@ -202,7 +205,7 @@ export class MiscRepository implements IMiscRepository {
         return {
           type: sector,
           country,
-          change: p * random(-0.5, -0.1),
+          change: random(-0.5, -0.5),
         };
       },
     );
@@ -225,7 +228,7 @@ export class MiscRepository implements IMiscRepository {
 
     const buildGainers = () => {
       const nextRandom = (min: number = 0.1, max: number = 0.5) =>
-        random(min, max) * p;
+        random(min, max);
 
       const values = Object.values(SectorType).map((type) => {
         return {
@@ -256,7 +259,7 @@ export class MiscRepository implements IMiscRepository {
 
     const buildLosers = () => {
       const nextRandom = (min: number = -0.5, max: number = -0.1) =>
-        random(min, max) * p;
+        random(min, max);
 
       const values = Object.values(SectorType).map((type) => {
         return {

@@ -39,7 +39,7 @@ const IndicesPerformance = ({ onCountryChanged }: IndicesPerformanceType) => {
   const selectedIndices = data?.items
     ?.filter((item) => countries.includes(item.countryCode))
     .map((item) => {
-      return { id: item.countryCode, value: item.points };
+      return { id: item.countryCode, value: item.regularMarketPrice };
     });
 
   return (

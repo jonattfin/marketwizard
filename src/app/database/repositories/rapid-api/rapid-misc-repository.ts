@@ -52,7 +52,8 @@ export class RapidMiscRepository implements IMiscRepository {
         id: i,
         name: indices[i]?.name,
         ytdPerformance: 0,
-        points: item.regularMarketPreviousClose,
+        regularMarketPrice: item.regularMarketPrice,
+        regularMarketChangePercent: item.regularMarketChangePercent,
         countryCode: indices[i]?.countryCode,
       })),
       date: dayjs().toDate(),
@@ -165,6 +166,7 @@ type YahooFinanceNews = {
 type YahooFinanceQuote = {
   body: {
     shortName: string;
-    regularMarketPreviousClose: number;
+    regularMarketPrice: number;
+    regularMarketChangePercent: number;
   }[];
 };

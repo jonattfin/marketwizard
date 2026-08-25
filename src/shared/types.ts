@@ -129,9 +129,9 @@ export type PortfolioPerformanceType = {
 export type IndicePerformanceType = {
   id: number;
   name: string;
-  ytdPerformance: number;
   countryCode: string;
-  points: number;
+  regularMarketChangePercent?: number;
+  regularMarketPrice: number;
 };
 
 export type IndicePerformanceDataType = {

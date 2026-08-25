@@ -1,6 +1,6 @@
 "use client";
 
-import { FormatNumber, Switch, Table } from "@chakra-ui/react";
+import { FormatNumber, Switch, Table, Tag } from "@chakra-ui/react";
 import { IndicePerformanceDataType } from "@/shared/types";
 import { HiCheck, HiX } from "react-icons/hi";
 import { lastUpdatedAt } from "@/shared/helpers";
@@ -22,7 +22,7 @@ export const IndicesTable = ({
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader>Indice</Table.ColumnHeader>
-            {/*<Table.ColumnHeader>YTD</Table.ColumnHeader>*/}
+            <Table.ColumnHeader>Chg%</Table.ColumnHeader>
             <Table.ColumnHeader>Points</Table.ColumnHeader>
             <Table.ColumnHeader textAlign="end">Off/On</Table.ColumnHeader>
           </Table.Row>
@@ -31,18 +31,18 @@ export const IndicesTable = ({
           {data?.items?.map((item) => (
             <Table.Row key={item.id}>
               <Table.Cell>{item.name}</Table.Cell>
-              {/*<Table.Cell>*/}
-              {/*  <Tag.Root size="md" variant={"subtle"} colorPalette={item.ytdPerformance > 0 ? "green" : "orange"}>*/}
-              {/*    <Tag.Label><FormatNumber*/}
-              {/*      value={item.ytdPerformance}*/}
-              {/*      style="percent"*/}
-              {/*      maximumFractionDigits={2}*/}
-              {/*      minimumFractionDigits={2}*/}
-              {/*    /></Tag.Label>*/}
-              {/*  </Tag.Root>*/}
-              {/*</Table.Cell>*/}
               <Table.Cell>
-                <FormatNumber value={item.points} />
+                <Tag.Root size="md" variant={"subtle"} colorPalette={(item.regularMarketChangePercent || 0) / 100  > 0 ? "green" : "orange"}>
+                  <Tag.Label><FormatNumber
+                    value={(item.regularMarketChangePercent || 0) / 100}
+                    style="percent"
+                    maximumFractionDigits={2}
+                    minimumFractionDigits={2}
+                  /></Tag.Label>
+                </Tag.Root>
+              </Table.Cell>
+              <Table.Cell>
+                <FormatNumber value={item.regularMarketPrice} />
               </Table.Cell>
               <Table.Cell textAlign="end">
                 <Switch.Root
