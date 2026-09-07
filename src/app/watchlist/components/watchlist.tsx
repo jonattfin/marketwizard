@@ -26,9 +26,6 @@ const useWatchlists = () => {
 };
 
 const Watchlist = () => {
-  const [watchlist, setWatchlist] = useState("");
-  const [setOpen] = useState(false);
-
   const {
     isPending,
     error,
@@ -38,24 +35,24 @@ const Watchlist = () => {
     isFetchingNextPage,
   } = useWatchlists();
 
-  const useCreateWatchlist = useMutation({
-    mutationFn: async () => {
-      const response = await fetch("/api/watchlists", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: watchlist } as { name: string }),
-      });
-      if (!response.ok) throw new Error(response.statusText);
-
-      return await response.json();
-    },
-    onError: () => {
-      toaster.create({
-        title: `Watchlist can't be created! Please try again later!`,
-        type: "error",
-      });
-    },
-  });
+  // const useCreateWatchlist = useMutation({
+  //   mutationFn: async () => {
+  //     const response = await fetch("/api/watchlists", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ name: watchlist } as { name: string }),
+  //     });
+  //     if (!response.ok) throw new Error(response.statusText);
+  //
+  //     return await response.json();
+  //   },
+  //   onError: () => {
+  //     toaster.create({
+  //       title: `Watchlist can't be created! Please try again later!`,
+  //       type: "error",
+  //     });
+  //   },
+  // });
 
   const useUpdateWatchlist = useMutation({
     mutationFn: async (watchlist: { id: string; name: string }) => {

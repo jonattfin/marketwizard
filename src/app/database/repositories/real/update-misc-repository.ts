@@ -4,7 +4,6 @@ import {drizzle} from "drizzle-orm/neon-http";
 import {cronJobsTable} from "../../schema";
 
 import {eq} from "drizzle-orm";
-import {IndicePerformanceDataType, TopNewsDataType} from "@/shared/types";
 
 export class UpdateMiscRepository {
   private readonly repository: IMiscRepository;

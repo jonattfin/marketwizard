@@ -5,7 +5,6 @@ import {
 } from "@/shared/types";
 import {LoremIpsum} from "lorem-ipsum";
 import {IWatchlistRepository} from "@/app/database/interfaces/i-watchlist-repository";
-import {random, range} from "es-toolkit";
 
 const lorem = new LoremIpsum();
 

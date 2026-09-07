@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import { ReturnTable } from "@/app/lazy-portfolios/[id]/components/return-table";
 import { LazyPortfolioItemType } from "@/shared/types";
-import { random } from "es-toolkit";
 
 export type PortfolioReturnsType = {
   items: LazyPortfolioItemType[];

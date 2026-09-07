@@ -168,7 +168,7 @@ export class MiscRepository implements IMiscRepository {
     countries: string[],
     period: string,
   ): Promise<TopIndustriesDataType> {
-    const p = Number.parseInt(period || "1");
+    // const p = Number.parseInt(period || "1");
     let country = "N/A";
     if (countries.length > 0) {
       country = countries[randomInt(0, countries.length)];
