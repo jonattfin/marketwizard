@@ -12,15 +12,7 @@ import { LuLoaderCircle } from "react-icons/lu";
 import { WatchListPageType } from "@/shared/types";
 
 const useWatchlists = () => {
-  const {
-    isPending,
-    error,
-    data,
-    isFetching,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery<WatchListPageType, Error>({
+  return useInfiniteQuery<WatchListPageType, Error>({
     queryKey: ["watchlists"],
     queryFn: async ({ pageParam = "0" }) => {
       const response = await fetch(`/api/watchlists?cursor=${pageParam}`);
@@ -31,16 +23,6 @@ const useWatchlists = () => {
     },
     initialPageParam: "0",
   });
-
-  return {
-    isPending,
-    isFetching,
-    error,
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  };
 };
 
 const Watchlist = () => {

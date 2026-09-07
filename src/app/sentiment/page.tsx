@@ -12,8 +12,8 @@ import {
 } from "@chakra-ui/react";
 import LineChart3 from "@/app/sentiment/components/lineChart3";
 
-import { JSX, useMemo } from "react";
-import { Metadata } from "next";
+import {JSX, useMemo} from "react";
+import {Metadata} from "next";
 
 export const metadata: Metadata = {
   title: "Investor Sentiment - Market Wizard",
@@ -30,7 +30,7 @@ export default function Sentiment() {
           <Breadcrumb.Item>
             <Breadcrumb.Link href="/">Home</Breadcrumb.Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Separator />
+          <Breadcrumb.Separator/>
           <Breadcrumb.Item>
             <Breadcrumb.CurrentLink data-testid={"sentiment-link"}>
               Fear & Greed Index
@@ -55,7 +55,7 @@ export default function Sentiment() {
       <Stack
         separator={
           <Stack>
-            <StackSeparator />
+            <StackSeparator/>
             <div>&nbsp;</div>
           </Stack>
         }
@@ -159,7 +159,7 @@ function createItems(): ItemType[] {
       id: 1,
       title: "Market Momentum",
       subtitle: "S&P 500 and its 125-day moving average",
-      chart: <LineChart3 />,
+      chart: <LineChart3/>,
       sentiment: "Fear",
       text: `
     It’s useful to look at stock market levels compared to where they’ve been over the past few months. 
@@ -172,7 +172,7 @@ function createItems(): ItemType[] {
       id: 2,
       title: "Stock price strength",
       subtitle: "Net new 52-week highs and lows on the NYSE",
-      chart: <LineChart3 />,
+      chart: <LineChart3/>,
       sentiment: "Extreme fear",
       text: `
     A few big stocks can skew returns for the market. 
@@ -185,7 +185,7 @@ function createItems(): ItemType[] {
       id: 3,
       title: "Stock price breath",
       subtitle: "McClellan Volume Summation Index",
-      chart: <LineChart3 />,
+      chart: <LineChart3/>,
       sentiment: "Extreme fear",
       text: `
     The market is made up of thousands of stocks. And on any given day, investors are actively buying and selling them. 

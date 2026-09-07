@@ -14,7 +14,18 @@ import {
 } from "recharts";
 import { random } from "es-toolkit";
 
-const nextValue = () => random(4, 100);
+let prevValue: number | undefined = undefined;
+
+const nextValue = () => {
+
+  if (!prevValue) {
+    prevValue = random(10, 50);
+  }
+
+  prevValue = prevValue + random(-3,3);
+
+  return prevValue;
+}
 
 const Demo = () => {
   const chart = useChart({

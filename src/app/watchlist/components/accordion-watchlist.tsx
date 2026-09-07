@@ -51,7 +51,7 @@ export const AccordionWatchlist = ({
         <Accordion.Root multiple>
           {watchlists.map((watchlist) => (
             <Accordion.Item key={watchlist.id} value={watchlist.id.toString()}>
-              <Box position="relative">
+              <Box position="relative" m={"1"}>
                 <Accordion.ItemTrigger>
                   <Icon fontSize="lg" color={"orange.200"}>
                     <LuAtom />

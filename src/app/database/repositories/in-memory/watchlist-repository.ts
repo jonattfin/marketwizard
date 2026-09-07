@@ -3,9 +3,9 @@ import {
   WatchListPageType,
   WatchListType,
 } from "@/shared/types";
-import { LoremIpsum } from "lorem-ipsum";
-import { IWatchlistRepository } from "@/app/database/interfaces/i-watchlist-repository";
-import { random, range } from "es-toolkit";
+import {LoremIpsum} from "lorem-ipsum";
+import {IWatchlistRepository} from "@/app/database/interfaces/i-watchlist-repository";
+import {random, range} from "es-toolkit";
 
 const lorem = new LoremIpsum();
 
@@ -61,9 +61,9 @@ export class WatchlistRepository implements IWatchlistRepository {
   }
 
   async fetchWatchlist(cursor: string = "0"): Promise<WatchListPageType> {
-    const { items } = this.watchlists;
+    const {items} = this.watchlists;
 
-    const pageSize = 5;
+    const pageSize = 2;
 
     const start = Number.parseInt(cursor, 10);
     const end = Math.min(start + pageSize, items.length);
@@ -76,27 +76,44 @@ export class WatchlistRepository implements IWatchlistRepository {
 
   async updateWatchlist(id: string, name: string): Promise<void> {
     this.watchlists.items = this.watchlists.items.map((w) =>
-      w.id === id ? { ...w, name } : w,
+      w.id === id ? {...w, name} : w,
     );
     return undefined;
   }
 }
 
 function createWatchlists(): WatchListPageType {
-  const items = range(20).map((index) => {
-    return {
-      id: index.toString(),
-      name: `Watchlist ${index}`,
-      items: range(random(3)).map((jIndex) => {
-        return {
-          id: `${index}${jIndex}`,
-          name: `${lorem.generateWords(2)}`,
-          description: `${lorem.generateSentences(2)}`,
-          ticker: `${lorem.generateWords(1)}`,
-        };
-      }),
-    };
-  });
+
+  const mag_seven = ["Nvidia", "Apple", "Microsoft", "Amazon", "Alphabet", "Tesla"];
+  const cryptocurrencies = ["Bitcoin", "Ethereum", "XRP"];
+  const futures = ["Gold", "Silver", "Cooper", "Crude Oil"]
+
+  const getItems = (values: string[]) => {
+    return values.map(v => ({
+        id: v,
+        ticker: v,
+        name: v,
+        description: v,
+      }))
+  }
+
+  const items: WatchListType[] = [
+    {
+      id: "Mag 7",
+      name: "Magnificent 7",
+      items: getItems(mag_seven),
+    },
+    {
+      id: "Futures",
+      name: "Futures",
+      items: getItems(futures)
+    },
+    {
+      id: "Crypto",
+      name: "Crypto",
+      items: getItems(cryptocurrencies),
+    },
+  ]
 
   return {
     items,
