@@ -15,13 +15,13 @@ enum Environment {
 
 class Factory {
   getEnvironment(): Environment | undefined {
-    // if (process.env.NODE_ENV === "development") {
-    //   return Environment.Development;
-    // } else if (process.env.NODE_ENV === "production") {
-    //   return Environment.Production;
-    // }
+    console.log("Getting environment...", process.env.NODE_ENV);
 
-    return Environment.Development;
+    if (process.env.NODE_ENV === "production") {
+      return Environment.Production;
+    }
+
+     return Environment.Development;
   }
 
   createMiscRepository() {

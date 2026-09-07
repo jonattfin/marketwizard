@@ -6,6 +6,7 @@ import IndicesPerformance from "@/app/dashboard/components/indices-performance";
 import YoutubeVideo from "@/app/dashboard/components/youtube-video";
 import SectorPerformance from "@/app/dashboard/components/sector-performance";
 import { LuActivity, LuAxis3D, LuScale, LuNewspaper } from "react-icons/lu";
+// import {MarketTreemap} from "@/shared/treemap";
 
 import News from "@/app/dashboard/components/news";
 import { CountryContext } from "@/shared/context/country-context";

@@ -1,3 +1,5 @@
 import { createContext } from "react";
 
-export const AppThemeContext = createContext("dark");
+export type ThemeContextType = "light" | "dark";
+
+export const AppThemeContext = createContext<ThemeContextType>("light");

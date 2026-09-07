@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { Logo } from "@/shared/logo";
 import { LuLinkedin, LuTwitter, LuYoutube } from "react-icons/lu";
+import dayjs from "dayjs";
+
 
 export default function Footer() {
   return (
@@ -102,7 +104,7 @@ export default function Footer() {
           financial decisions.
         </div>
         <div>
-          <div>&nbsp;</div>© 2025 Market Wizard
+          <div>&nbsp;</div>© {dayjs().year()} Market Wizard
         </div>
       </Stack>
     </Stack>

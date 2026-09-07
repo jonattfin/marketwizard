@@ -3,5 +3,6 @@ import { miscRepository } from "@/app/database/repository";
 
 export async function GET(request: NextRequest) {
   const data = await miscRepository.fetchIndicesPerformance();
+
   return NextResponse.json(data);
 }

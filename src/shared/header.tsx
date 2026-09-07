@@ -18,6 +18,7 @@ import { LuMenu } from "react-icons/lu";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { Logo } from "@/shared/logo";
 import Link from "next/link";
+import {ThemeContextType} from "@/shared/context/theme-context";
 
 const links = [
   { name: "Home", href: "/" },
@@ -79,7 +80,7 @@ const MobileDrawer = () => {
 
 export type HamburgerMenuType = {
   theme: string;
-  setTheme: (theme: "dark" | "light") => void;
+  setTheme: (theme: ThemeContextType) => void;
 };
 
 function HamburgerMenu({ theme, setTheme }: Readonly<HamburgerMenuType>) {
@@ -131,7 +132,7 @@ function HamburgerMenu({ theme, setTheme }: Readonly<HamburgerMenuType>) {
 
 export type HeaderMenuType = {
   theme: string;
-  setTheme: (theme: "dark" | "light") => void;
+  setTheme: (theme: ThemeContextType) => void;
 };
 
 export default function Header({ theme, setTheme }: Readonly<HeaderMenuType>) {

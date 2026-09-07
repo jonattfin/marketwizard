@@ -5,7 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { useState } from "react";
 import { ThemeContext } from "@emotion/react";
-import { AppThemeContext } from "@/shared/context/theme-context";
+import {AppThemeContext, ThemeContextType} from "@/shared/context/theme-context";
 import { Center, Container, Flex, Separator, Theme } from "@chakra-ui/react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -31,7 +31,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [theme, setTheme] = useState<"dark" | "light">("light");
+  const [theme, setTheme] = useState<ThemeContextType>("light");
 
   return (
     <html lang="en" suppressHydrationWarning>
