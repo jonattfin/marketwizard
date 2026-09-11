@@ -20,7 +20,10 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": [
+      "msw-storybook-addon/csf3"
+    ]
   },
   "include": [
     "next-env.d.ts",

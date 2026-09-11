@@ -1,4 +1,4 @@
-import { mswLoader } from "msw-storybook-addon/csf3";
+import { mswLoader } from 'msw-storybook-addon/csf3';
 import { Preview } from "@storybook/nextjs-vite";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // @ts-ignore
