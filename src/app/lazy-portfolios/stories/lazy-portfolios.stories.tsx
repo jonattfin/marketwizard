@@ -15,7 +15,7 @@ const meta = {
     layout: "fullscreen",
     msw: {
       handlers: [
-        http.get("api/lazy-portfolios/all", async () => {
+        http.get("api/lazy-portfolios", async () => {
           const portfolios = await portfolioRepository.fetchLazyPortfolios();
           return HttpResponse.json(portfolios);
         }),

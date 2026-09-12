@@ -25,7 +25,7 @@ const useLazyPortfolios = (pageNumber: number, pageSize: number) => {
     queryKey: ["lazy-portfolios", pageNumber, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `/api/lazy-portfolios/all?pageNumber=${encodeURIComponent(pageNumber)}&pageSize=${pageSize}`,
+        `/api/lazy-portfolios/?pageNumber=${encodeURIComponent(pageNumber)}&pageSize=${pageSize}`,
       );
       return await response.json();
     },

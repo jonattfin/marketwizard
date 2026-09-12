@@ -10,15 +10,13 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "@/shared/loading";
 
 const useLazyPortfolioById = (id: string | undefined) => {
-  const { isPending, error, data } = useQuery<LazyPortfolioType | undefined>({
+  return useQuery<LazyPortfolioType | undefined>({
     queryKey: ["lazy-portfolio", id],
     queryFn: async () => {
       const response = await fetch(`/api/lazy-portfolios/${id}`);
       return await response.json();
     },
   });
-
-  return { isPending, error, data };
 };
 
 export type LazyPortfolioDetailsType = {

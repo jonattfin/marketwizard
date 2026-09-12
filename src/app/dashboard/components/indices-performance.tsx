@@ -14,15 +14,13 @@ const WorldMap = React.lazy(
 );
 
 export const useIndicesPerformance = () => {
-  const { isPending, error, data } = useQuery<IndicePerformanceDataType>({
-    queryKey: ["indices-performance"],
+  return useQuery<IndicePerformanceDataType>({
+    queryKey: ["indices"],
     queryFn: async () => {
-      const response = await fetch("/api/dashboard/performance");
+      const response = await fetch("/api/indices");
       return await response.json();
     },
   });
-
-  return { isPending, error, data };
 };
 
 type IndicesPerformanceType = {

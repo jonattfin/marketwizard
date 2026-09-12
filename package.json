@@ -31,6 +31,7 @@
     "dotenv": "^17.4.2",
     "drizzle-orm": "1.0.0-rc.4",
     "es-toolkit": "^1.51.0",
+    "hono": "^4.13.7",
     "lorem-ipsum": "^3.0.0",
     "msw": "^2.15.0",
     "msw-storybook-addon": "^3.0.0",

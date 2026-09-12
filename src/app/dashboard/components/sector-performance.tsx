@@ -34,21 +34,15 @@ import { lastUpdatedAt } from "@/shared/helpers";
 const useSectorPerformance = () => {
   const countries = useContext(CountryContext);
 
-  const { isPending, error, data } = useQuery<SectorPerformanceDataType>({
+  return useQuery<SectorPerformanceDataType>({
     queryKey: ["sector-performance", countries],
     queryFn: async () => {
       const response = await fetch(
-        `/api/dashboard/sector-performance?countries=${encodeURIComponent(JSON.stringify(countries))}`,
+        `/api/sector-performance?countries=${encodeURIComponent(JSON.stringify(countries))}`,
       );
       return await response.json();
     },
   });
-
-  return {
-    isPending,
-    error,
-    data,
-  };
 };
 
 const SectorPerformanceTable = () => {

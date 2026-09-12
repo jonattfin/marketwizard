@@ -13,21 +13,15 @@ import { lastUpdatedAt } from "@/shared/helpers";
 const useTopNews = () => {
   const countries = useContext(CountryContext);
 
-  const { isPending, error, data } = useQuery<TopNewsDataType>({
+  return useQuery<TopNewsDataType>({
     queryKey: ["top-news", countries],
     queryFn: async () => {
       const response = await fetch(
-        `api/dashboard/news?countries=${encodeURIComponent(JSON.stringify(countries))}`,
+        `api/top-news?countries=${encodeURIComponent(JSON.stringify(countries))}`,
       );
       return await response.json();
     },
   });
-
-  return {
-    isPending,
-    error,
-    data,
-  };
 };
 
 const News = () => {

@@ -11,15 +11,13 @@ export type MarketTreemapType = {
 };
 
 const useTreeMap = () => {
-  const { isPending, error, data } = useQuery<TreeMapType[]>({
+  return useQuery<TreeMapType[]>({
     queryKey: ["tree-maps"],
     queryFn: async () => {
-      const response = await fetch(`/api/treemap`);
+      const response = await fetch(`/api/map-performance`);
       return await response.json();
     },
   });
-
-  return { isPending, error, data: data ?? [] };
 };
 
 export const MarketTreemap = ({ height = 800 }: MarketTreemapType) => {
@@ -54,8 +52,8 @@ export const MarketTreemap = ({ height = 800 }: MarketTreemapType) => {
   );
 };
 
-function transformData(data: TreeMapType[], countries: string[]) {
-  const children = data.map((d) => {
+function transformData(data: TreeMapType[] | undefined, countries: string[]) {
+  const children = data?.map((d) => {
     return {
       name: d.sector,
       children: d.companies.map((c) => ({

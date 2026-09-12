@@ -15,11 +15,11 @@ const meta = {
     layout: "fullscreen",
     msw: {
       handlers: [
-        http.get("/api/dashboard/performance", async () => {
+        http.get("/api/indices", async () => {
           const data = await miscRepository.fetchIndicesPerformance();
           return HttpResponse.json(data);
         }),
-        http.get("/api/treemap", async () => {
+        http.get("/api/map-performance", async () => {
           const data = await miscRepository.fetchMapPerformance();
           return HttpResponse.json(data);
         }),

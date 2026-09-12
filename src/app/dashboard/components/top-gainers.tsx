@@ -17,41 +17,29 @@ import { lastUpdatedAt } from "@/shared/helpers";
 const useGainers = (period: number) => {
   const countries = useContext(CountryContext);
 
-  const { isPending, error, data } = useQuery<GainersDataType>({
+  return useQuery<GainersDataType>({
     queryKey: ["top-gainers", period, countries],
     queryFn: async () => {
       const response = await fetch(
-        `/api/dashboard/gainers?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
+        `/api/top-gainers?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
       );
       return await response.json();
     },
   });
-
-  return {
-    isPending,
-    error,
-    data,
-  };
 };
 
 const useLosers = (period: number) => {
   const countries = useContext(CountryContext);
 
-  const { isPending, error, data } = useQuery<LosersDataType>({
+  return useQuery<LosersDataType>({
     queryKey: ["top-losers", period, countries],
     queryFn: async () => {
       const response = await fetch(
-        `/api/dashboard/losers?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
+        `/api/top-losers?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
       );
       return await response.json();
     },
   });
-
-  return {
-    isPending,
-    error,
-    data: data,
-  };
 };
 
 const useTopIndustries = (period: number) => {
@@ -61,7 +49,7 @@ const useTopIndustries = (period: number) => {
     queryKey: ["top-industries", period, countries],
     queryFn: async () => {
       const response = await fetch(
-        `/api/dashboard/top-industries?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
+        `/api/top-industries?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
       );
       return await response.json();
     },
@@ -81,7 +69,7 @@ const useWorstIndustries = (period: number) => {
     queryKey: ["worst-industries", period, countries],
     queryFn: async () => {
       const response = await fetch(
-        `/api/dashboard/worst-industries?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
+        `/api/worst-industries?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
       );
       return await response.json();
     },
