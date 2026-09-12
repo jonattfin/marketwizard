@@ -24,9 +24,9 @@ export type EtfThemeListProps = {
 
 const useEtfTheme = (theme: string) => {
   const { isPending, error, data } = useQuery<EtfThemeByIdType>({
-    queryKey: ["etf-theme", theme],
+    queryKey: ["etf", theme],
     queryFn: async () => {
-      const response = await fetch(`/api/etfs//${theme}`);
+      const response = await fetch(`/api/etf/${theme}`);
       return await response.json();
     },
   });

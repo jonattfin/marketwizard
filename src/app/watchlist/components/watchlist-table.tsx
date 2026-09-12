@@ -32,7 +32,7 @@ export const WatchlistTable = ({ watchlist }: WatchlistTableType) => {
       watchlistId: string;
       ticker: string;
     }) => {
-      const response = await fetch("/api/watchlists/items", {
+      const response = await fetch("/api/watchlist-item", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(watchlistItem),
@@ -43,7 +43,7 @@ export const WatchlistTable = ({ watchlist }: WatchlistTableType) => {
 
   const useDeleteWatchlistItem = useMutation({
     mutationFn: async (watchlist: { id: string; itemId: string }) => {
-      const response = await fetch("/api/watchlists/items", {
+      const response = await fetch("/api/watchlist-item", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(watchlist),
@@ -58,7 +58,7 @@ export const WatchlistTable = ({ watchlist }: WatchlistTableType) => {
         watchlistId,
         ticker,
       });
-      await queryClient.invalidateQueries({ queryKey: ["watchlists"] });
+      await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
 
       setTicker("");
       setOpen(false);
@@ -83,7 +83,7 @@ export const WatchlistTable = ({ watchlist }: WatchlistTableType) => {
         id,
         itemId,
       });
-      await queryClient.invalidateQueries({ queryKey: ["watchlists"] });
+      await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
 
       toaster.create({
         title: `Watchlist item deleted successfully!`,

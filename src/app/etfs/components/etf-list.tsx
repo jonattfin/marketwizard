@@ -8,9 +8,9 @@ import Loading from "@/shared/loading";
 
 const useEtfThemes = () => {
   const { isPending, error, data } = useQuery<EtfThemeType[]>({
-    queryKey: ["etf-themes"],
+    queryKey: ["etf"],
     queryFn: async () => {
-      const response = await fetch("/api/etfs/all");
+      const response = await fetch("/api/etf");
       return await response.json();
     },
   });

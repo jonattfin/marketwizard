@@ -13,9 +13,9 @@ import { WatchListPageType } from "@/shared/types";
 
 const useWatchlists = () => {
   return useInfiniteQuery<WatchListPageType, Error>({
-    queryKey: ["watchlists"],
+    queryKey: ["watchlist"],
     queryFn: async ({ pageParam = "0" }) => {
-      const response = await fetch(`/api/watchlists?cursor=${pageParam}`);
+      const response = await fetch(`/api/watchlist?cursor=${pageParam}`);
       return await response.json();
     },
     getNextPageParam: (lastPage) => {
@@ -56,7 +56,7 @@ const Watchlist = () => {
 
   const useUpdateWatchlist = useMutation({
     mutationFn: async (watchlist: { id: string; name: string }) => {
-      const response = await fetch("/api/watchlists", {
+      const response = await fetch("/api/watchlist", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(watchlist),
@@ -73,7 +73,7 @@ const Watchlist = () => {
 
   const useDeleteWatchlist = useMutation({
     mutationFn: async (watchlist: { id: string }) => {
-      const response = await fetch("/api/watchlists", {
+      const response = await fetch("/api/watchlist", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(watchlist),
@@ -93,7 +93,7 @@ const Watchlist = () => {
       id,
       name: watchlistName,
     });
-    await queryClient.invalidateQueries({ queryKey: ["watchlists"] });
+    await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
 
     toaster.create({
       title: `Watchlist updated successfully!`,
@@ -105,7 +105,7 @@ const Watchlist = () => {
     await useDeleteWatchlist.mutateAsync({
       id,
     });
-    await queryClient.invalidateQueries({ queryKey: ["watchlists"] });
+    await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
 
     toaster.create({
       title: `Watchlist deleted successfully!`,
