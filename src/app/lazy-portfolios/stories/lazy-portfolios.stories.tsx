@@ -4,7 +4,7 @@ import { expect, within } from "storybook/test";
 import { delay } from "es-toolkit";
 import LazyPortfolios from "@/app/lazy-portfolios/page";
 import { http, HttpResponse } from "msw";
-import { portfolioRepository } from "@/app/database/repository";
+import { unitOfWork } from "@/app/database/unit-of-work";
 
 const meta = {
   title: "MarketWizard/Lazy Portfolios/Lazy Portfolios List",
@@ -16,7 +16,7 @@ const meta = {
     msw: {
       handlers: [
         http.get("api/lazy-portfolios", async () => {
-          const portfolios = await portfolioRepository.fetchLazyPortfolios();
+          const portfolios = await unitOfWork.portfolioRepository.fetchLazyPortfolios();
           return HttpResponse.json(portfolios);
         }),
       ],

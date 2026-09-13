@@ -13,8 +13,24 @@ enum Environment {
   Production = "production",
 }
 
-class Factory {
-  getEnvironment(): Environment | undefined {
+class UnitOfWork {
+  private readonly _miscRepository = this.createMiscRepository();
+  private readonly _updateMiscRepository = this.createUpdateMiscRepository();
+  private readonly _portfolioRepository = this.createPortfolioRepository();
+  private readonly _watchlistRepository = this.createWatchlistRepository();
+  private readonly _etfRepository = this.createEtfRepository();
+
+  get miscRepository() { return this._miscRepository; }
+
+  get updateMiscRepository() { return this._updateMiscRepository; }
+
+  get portfolioRepository() { return this._portfolioRepository; }
+
+  get watchlistRepository() { return this._watchlistRepository; }
+
+  get etfRepository() { return this._etfRepository; }
+
+  private getEnvironment(): Environment | undefined {
     console.log("Getting environment...", process.env.NODE_ENV);
 
     if (process.env.NODE_ENV === "production") {
@@ -48,11 +64,4 @@ class Factory {
   }
 }
 
-const factory = new Factory();
-
-export const miscRepository = factory.createMiscRepository();
-export const updateMiscRepository = factory.createUpdateMiscRepository();
-
-export const portfolioRepository = factory.createPortfolioRepository();
-export const etfRepository = factory.createEtfRepository();
-export const watchlistRepository = factory.createWatchlistRepository();
+export const unitOfWork = new UnitOfWork();

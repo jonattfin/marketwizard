@@ -4,7 +4,7 @@ import Watchlist from "@/app/watchlist/components/watchlist";
 import { delay } from "es-toolkit";
 
 import { http, HttpResponse } from "msw";
-import { watchlistRepository } from "@/app/database/repository";
+import { unitOfWork } from "@/app/database/unit-of-work";
 
 const meta = {
   title: "MarketWizard/Watchlist/Watchlist",
@@ -16,7 +16,7 @@ const meta = {
     msw: {
       handlers: [
         http.get("/api/watchlists", async () => {
-          const watchlists = await watchlistRepository.fetchWatchlist();
+          const watchlists = await unitOfWork.watchlistRepository.fetchWatchlist();
           return HttpResponse.json(watchlists);
         }),
       ],

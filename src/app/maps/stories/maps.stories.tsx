@@ -4,7 +4,7 @@ import { expect, within } from "storybook/test";
 import Maps from "@/app/maps/page";
 import { delay } from "es-toolkit";
 import { http, HttpResponse } from "msw";
-import { miscRepository } from "@/app/database/repository";
+import { unitOfWork } from "@/app/database/unit-of-work";
 
 const meta = {
   title: "MarketWizard/Maps",
@@ -16,11 +16,11 @@ const meta = {
     msw: {
       handlers: [
         http.get("/api/indices", async () => {
-          const data = await miscRepository.fetchIndicesPerformance();
+          const data = await unitOfWork.miscRepository.fetchIndicesPerformance();
           return HttpResponse.json(data);
         }),
         http.get("/api/map-performance", async () => {
-          const data = await miscRepository.fetchMapPerformance();
+          const data = await unitOfWork.miscRepository.fetchMapPerformance();
           return HttpResponse.json(data);
         }),
       ],

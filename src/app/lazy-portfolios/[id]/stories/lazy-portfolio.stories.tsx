@@ -4,7 +4,7 @@ import { expect, within } from "storybook/test";
 import { delay } from "es-toolkit";
 import LazyPortfolioDetails from "@/app/lazy-portfolios/[id]/components/lazy-portfolio-details";
 import { http, HttpResponse } from "msw";
-import { portfolioRepository } from "@/app/database/repository";
+import { unitOfWork } from "@/app/database/unit-of-work";
 
 const id = 1;
 
@@ -20,7 +20,7 @@ const meta = {
       handlers: [
         http.get(`api/lazy-portfolios/${id}`, async () => {
           const portfolio =
-            await portfolioRepository.fetchLazyPortfolioById(id);
+            await unitOfWork.portfolioRepository.fetchLazyPortfolioById(id);
           return HttpResponse.json(portfolio);
         }),
       ],

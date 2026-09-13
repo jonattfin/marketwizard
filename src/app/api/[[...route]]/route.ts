@@ -1,12 +1,6 @@
 import {Hono} from 'hono'
 import {handle} from 'hono/vercel'
-import {
-  miscRepository,
-  portfolioRepository,
-  etfRepository,
-  watchlistRepository,
-  updateMiscRepository
-} from "@/app/database/repository";
+import {unitOfWork} from '@/app/database/unit-of-work'
 
 const app = new Hono().basePath('/api')
 
@@ -17,7 +11,7 @@ app.get('/hello', (c) => {
 })
 
 app.get('/indices', async (c) => {
-  const data = await miscRepository.fetchIndicesPerformance()
+  const data = await unitOfWork.miscRepository.fetchIndicesPerformance()
 
   return c.json(data);
 })
@@ -25,7 +19,7 @@ app.get('/indices', async (c) => {
 app.get('/top-gainers', async (c) => {
   const {countries, period} = c.req.query();
 
-  const data = await miscRepository.fetchGainers(
+  const data = await unitOfWork.miscRepository.fetchGainers(
     JSON.parse(countries) as string[],
     period,
   )
@@ -36,7 +30,7 @@ app.get('/top-gainers', async (c) => {
 app.get('/top-losers', async (c) => {
   const {countries, period} = c.req.query();
 
-  const data = await miscRepository.fetchLosers(
+  const data = await unitOfWork.miscRepository.fetchLosers(
     JSON.parse(countries) as string[],
     period,
   )
@@ -47,7 +41,7 @@ app.get('/top-losers', async (c) => {
 app.get('/top-news', async (c) => {
   const {countries} = c.req.query();
 
-  const data = await miscRepository.fetchTopNews(
+  const data = await unitOfWork.miscRepository.fetchTopNews(
     JSON.parse(countries) as string[],
   )
 
@@ -57,7 +51,7 @@ app.get('/top-news', async (c) => {
 app.get('/top-industries', async (c) => {
   const {countries, period} = c.req.query();
 
-  const data = await miscRepository.fetchTopIndustries(
+  const data = await unitOfWork.miscRepository.fetchTopIndustries(
     JSON.parse(countries) as string[],
     period
   )
@@ -68,7 +62,7 @@ app.get('/top-industries', async (c) => {
 app.get('/worst-industries', async (c) => {
   const {countries, period} = c.req.query();
 
-  const data = await miscRepository.fetchWorstIndustries(
+  const data = await unitOfWork.miscRepository.fetchWorstIndustries(
     JSON.parse(countries) as string[],
     period
   )
@@ -79,7 +73,7 @@ app.get('/worst-industries', async (c) => {
 app.get('/sector-performance', async (c) => {
   const {countries} = c.req.query();
 
-  const data = await miscRepository.fetchSectorPerformance(
+  const data = await unitOfWork.miscRepository.fetchSectorPerformance(
     JSON.parse(countries) as string[],
   )
 
@@ -87,35 +81,35 @@ app.get('/sector-performance', async (c) => {
 })
 
 app.get('/map-performance', async (c) => {
-  const data = await miscRepository.fetchMapPerformance()
+  const data = await unitOfWork.miscRepository.fetchMapPerformance()
   return c.json(data);
 })
 
 // lazy portfolios
 
 app.get('/lazy-portfolios', async (c) => {
-  const data = await portfolioRepository.fetchLazyPortfolios()
+  const data = await unitOfWork.portfolioRepository.fetchLazyPortfolios()
   return c.json(data);
 })
 
 app.get('/lazy-portfolios/:id', async (c) => {
   const {id} = c.req.param()
 
-  const data = await portfolioRepository.fetchPortfolioById(id)
+  const data = await unitOfWork.portfolioRepository.fetchPortfolioById(id)
   return c.json(data);
 })
 
 // etf
 
 app.get('/etf', async (c) => {
-  const data = await etfRepository.fetchEtfs()
+  const data = await unitOfWork.etfRepository.fetchEtfs()
   return c.json(data);
 })
 
 app.get('/etf/:id', async (c) => {
   const {id} = c.req.param()
 
-  const data = await etfRepository.fetchEtfById(id)
+  const data = await unitOfWork.etfRepository.fetchEtfById(id)
   return c.json(data);
 })
 
@@ -124,46 +118,46 @@ app.get('/etf/:id', async (c) => {
 app.get('/watchlist', async (c) => {
   const {cursor} = c.req.query();
 
-  const data = await watchlistRepository.fetchWatchlist(cursor);
+  const data = await unitOfWork.watchlistRepository.fetchWatchlist(cursor);
   return c.json(data);
 });
 
 app.post('/watchlist', async (c) => {
   const body = await c.req.json()
 
-  const data = await watchlistRepository.createWatchlist(body.name);
+  const data = await unitOfWork.watchlistRepository.createWatchlist(body.name);
   return c.json(data);
 });
 
 app.put('/watchlist', async (c) => {
   const body = await c.req.json()
-  await watchlistRepository.updateWatchlist(body.id, body.name);
+  await unitOfWork.watchlistRepository.updateWatchlist(body.id, body.name);
   return c.json({updated: true}, 200);
 });
 
 app.delete('/watchlist', async (c) => {
   const body = await c.req.json()
 
-  const data = await watchlistRepository.deleteWatchlist(body.id);
+  const data = await unitOfWork.watchlistRepository.deleteWatchlist(body.id);
   return c.json(data);
 });
 
 app.post('/watchlist-item', async (c) => {
   const body = await c.req.json()
 
-  const data = await watchlistRepository.createWatchlistItem(body.watchlistId, body.ticker);
+  const data = await unitOfWork.watchlistRepository.createWatchlistItem(body.watchlistId, body.ticker);
   return c.json(data);
 });
 
 app.delete('/watchlist-item', async (c) => {
   const body = await c.req.json()
 
-  const data = await watchlistRepository.deleteWatchlistItem(body.id, body.itemId);
+  const data = await unitOfWork.watchlistRepository.deleteWatchlistItem(body.id, body.itemId);
   return c.json(data);
 });
 
 app.get('/cron-job', async (c) => {
-  const data = await updateMiscRepository.updateAll();
+  const data = await unitOfWork.updateMiscRepository.updateAll();
   return c.json({updated: true});
 });
 
