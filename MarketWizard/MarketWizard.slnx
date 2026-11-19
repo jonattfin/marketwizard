@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MarketWizard.AppHost/MarketWizard.AppHost.csproj" />
+  <Project Path="MarketWizard.Server/MarketWizard.Server.csproj" />
+</Solution>
