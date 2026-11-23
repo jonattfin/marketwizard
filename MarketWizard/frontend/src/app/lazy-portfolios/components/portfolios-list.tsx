@@ -44,7 +44,7 @@ export default function LazyPortfoliosList() {
   if (isPending) return <Loading />;
   if (error) return `Page ${JSON.stringify(error)}`;
 
-  const [numberOfLazyPortfolios, items = []] = data;
+  const {numberOfLazyPortfolios, items = []} = data;
 
   return (
     <>
