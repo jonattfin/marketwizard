@@ -1,16 +1,7 @@
-using MarketWizard.Server.FinancialModels;
+using MarketWizard.Contracts.Interfaces;
+using MarketWizard.Contracts.Models;
 
-namespace MarketWizard.Server.Repositories;
-
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-public interface IEtfRepository
-{
-    Task<EtfThemeByIdDto?> FetchEtfByIdAsync(string id);
-    Task<IReadOnlyList<EtfThemeDto>> FetchEtfsAsync();
-}
+namespace MarketWizard.Infrastructure.Repositories;
 
 public sealed class EtfRepository : IEtfRepository
 {
@@ -23,17 +14,17 @@ public sealed class EtfRepository : IEtfRepository
 
     private readonly IReadOnlyList<EtfThemeDto> _etfThemes = CreateEtfThemes();
 
-    public Task<EtfThemeByIdDto?> FetchEtfByIdAsync(string id)
+    public async Task<EtfThemeByIdDto?> FetchEtfById(string id)
     {
         var theme = _etfThemes.FirstOrDefault(t => t.Theme == id);
         var dto = CreateEtfByIdDto(theme?.Name, theme?.ImageUrl, theme?.Description);
 
-        return Task.FromResult<EtfThemeByIdDto?>(dto);
+        return await Task.FromResult<EtfThemeByIdDto?>(dto);
     }
 
-    public Task<IReadOnlyList<EtfThemeDto>> FetchEtfsAsync()
+    public async Task<IReadOnlyList<EtfThemeDto>> FetchEtfs()
     {
-        return Task.FromResult(_etfThemes);
+        return await Task.FromResult(_etfThemes);
     }
 
     private static List<EtfThemeDto> CreateEtfThemes() =>

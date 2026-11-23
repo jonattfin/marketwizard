@@ -1,8 +1,6 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace MarketWizard.Server.FinancialModels;
-
-// Portfolios
+namespace MarketWizard.Contracts.Models;
 
 public record PortfolioAssetDto(
     string Symbol,

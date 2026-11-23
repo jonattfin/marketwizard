@@ -1,44 +1,19 @@
-using System.Globalization;
+using MarketWizard.Contracts.Interfaces;
+using MarketWizard.Contracts.Models;
 
-using MarketWizard.Server.FinancialModels;
-
-public interface IPortfolioRepository
-{
-    Task<LazyPortfolioDto?> FetchLazyPortfolioByIdAsync(int id);
-    Task<LazyPortfolioDtoItems> FetchLazyPortfoliosAsync(int pageNumber = 1, int pageSize = 5);
-    Task<IReadOnlyList<PortfolioPerformanceDto>> FetchPortfoliosPerformanceAsync();
-    Task<PortfolioDto?> FetchPortfolioByIdAsync(string id);
-    Task<IReadOnlyList<PortfolioDto>> FetchPortfoliosAsync();
-    Task<PortfoliosAreaDto> FetchPortfoliosAreaAsync(string? portfolioId = null);
-}
+namespace MarketWizard.Infrastructure.Repositories;
 
 public sealed class PortfolioRepository : IPortfolioRepository
 {
-    private static readonly string[] SampleSentences =
-    [
-        "Global markets reacted to central bank guidance amid shifting rate expectations.",
-        "Institutional investors adjusted equity exposure ahead of key inflation releases.",
-        "Cross-border capital flows showed mixed momentum across major regional benchmarks.",
-        "Analysts highlighted earnings resilience despite elevated financing costs.",
-        "Liquidity conditions remained steady across sovereign debt and equity desks."
-    ];
-
-    private static readonly string[] Months =
-    [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-
-    private readonly IReadOnlyList<PortfolioSeed> _portfolios = CreatePortfolios();
     private readonly IReadOnlyList<LazyPortfolioDto> _lazyPortfolios = CreateLazyPortfolios();
 
-    public Task<LazyPortfolioDto?> FetchLazyPortfolioByIdAsync(int id)
+    public async Task<LazyPortfolioDto?> FetchLazyPortfolioById(int id)
     {
         var match = _lazyPortfolios.FirstOrDefault(p => p.Id == id);
-        return Task.FromResult(match);
+        return await Task.FromResult(match);
     }
 
-    public Task<LazyPortfolioDtoItems> FetchLazyPortfoliosAsync(
+    public async Task<LazyPortfolioDtoItems> FetchLazyPortfolios(
         int pageNumber = 1,
         int pageSize = 5)
     {
@@ -50,98 +25,9 @@ public sealed class PortfolioRepository : IPortfolioRepository
             .Take(safePageSize)
             .ToArray();
 
-        return Task.FromResult(new LazyPortfolioDtoItems(_lazyPortfolios.Count, items));
+        return await Task.FromResult(new LazyPortfolioDtoItems(_lazyPortfolios.Count, items));
     }
-
-    public Task<IReadOnlyList<PortfolioPerformanceDto>> FetchPortfoliosPerformanceAsync()
-    {
-        IReadOnlyList<PortfolioPerformanceDto> results = _portfolios
-            .Select(p => new PortfolioPerformanceDto(
-                Id: p.Id,
-                PortfolioName: p.Name,
-                SevenDay: NextDouble(0.0, 1.0),
-                OneYear: NextDouble(-1.0, 1.0)
-            ))
-            .ToList();
-
-        return Task.FromResult(results);
-    }
-
-    public Task<PortfolioDto?> FetchPortfolioByIdAsync(string id)
-    {
-        var seed = _portfolios.FirstOrDefault(p => p.Id == id);
-        if (seed is null)
-        {
-            return Task.FromResult<PortfolioDto?>(null);
-        }
-
-        var dto = new PortfolioDto(
-            Id: seed.Id,
-            Name: seed.Name
-        );
-
-        return Task.FromResult<PortfolioDto?>(dto);
-    }
-
-    public Task<IReadOnlyList<PortfolioDto>> FetchPortfoliosAsync()
-    {
-        var now = DateTime.UtcNow;
-
-        IReadOnlyList<PortfolioDto> results = _portfolios
-            .Select(p => new PortfolioDto(
-                Id: p.Id,
-                Name: p.Name,
-                Description: $"{SampleSentences[Random.Shared.Next(SampleSentences.Length)]} {SampleSentences[Random.Shared.Next(SampleSentences.Length)]}",
-                TotalValue: NextDouble(100.0, 1000.0),
-                UnrealizedGain: NextDouble(100.0, 300.0),
-                CreatedAt: now,
-                Holdings: 3,
-                Assets: []
-            ))
-            .ToList();
-
-        return Task.FromResult(results);
-    }
-
-    public Task<PortfoliosAreaDto> FetchPortfoliosAreaAsync(string? portfolioId = null)
-    {
-        var filteredPortfolios = string.IsNullOrWhiteSpace(portfolioId)
-            ? _portfolios
-            : _portfolios.Where(p => p.Id == portfolioId).ToList();
-
-        var performance = Months
-            .Select(month => new PortfolioAreaDto(
-                Month: month,
-                Portfolios: filteredPortfolios
-                    .Select(p => new PortfolioPerformancePointDto(
-                        Name: p.Name,
-                        Performance: NextDouble(-5.0, 10.0).ToString("F2", CultureInfo.InvariantCulture)
-                    ))
-                    .ToList()
-            ))
-            .ToList();
-
-        var result = new PortfoliosAreaDto(
-            Portfolios: filteredPortfolios.Select(p => p.Name).ToList(),
-            Performance: performance
-        );
-
-        return Task.FromResult(result);
-    }
-
-    private static double NextDouble(double min, double max) =>
-        min + (Random.Shared.NextDouble() * (max - min));
-
-    private sealed record PortfolioSeed(string Id, string Name);
-
-    private static List<PortfolioSeed> CreatePortfolios() =>
-    [
-        new("1", "Growth"),
-        new("2", "Energetic"),
-        new("3", "Smooth"),
-        new("4", "Calm"),
-        new("5", "Protective")
-    ];
+    
 
     private static List<LazyPortfolioDto> CreateLazyPortfolios() =>
     [

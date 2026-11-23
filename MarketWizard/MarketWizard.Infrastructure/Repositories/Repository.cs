@@ -1,19 +1,7 @@
-using MarketWizard.Server.FinancialModels;
+using MarketWizard.Contracts.Interfaces;
+using MarketWizard.Contracts.Models;
 
-namespace MarketWizard.Server.Repositories;
-
-public interface IMiscRepository
-{
-    Task<TopNewsDataDto> FetchTopNewsAsync(IReadOnlyList<string> countries);
-    Task<IndicePerformanceDataDto> FetchIndicesPerformanceAsync();
-    Task<SectorPerformanceDataDto> FetchSectorPerformanceAsync(IReadOnlyList<string> countries);
-    Task<IReadOnlyList<EquityDto>> FetchWorldEquityAsync();
-    Task<IReadOnlyList<TreeMapDto>> FetchMapPerformanceAsync();
-    Task<TopIndustriesDataDto> FetchTopIndustriesAsync(IReadOnlyList<string> countries, string period);
-    Task<WorstIndustriesDataDto> FetchWorstIndustriesAsync(IReadOnlyList<string> countries, string period);
-    Task<GainersDataDto> FetchGainersAsync(IReadOnlyList<string> countries, string? period = null);
-    Task<LosersDataDto> FetchLosersAsync(IReadOnlyList<string> countries, string? period = null);
-}
+namespace MarketWizard.Infrastructure.Repositories;
 
 public interface IMapPerformanceBuilder
 {
@@ -60,7 +48,7 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
 
     private readonly IReadOnlyList<MockEtfSummary> _etfs = CreateEtfs();
 
-    public Task<TopNewsDataDto> FetchTopNewsAsync(IReadOnlyList<string> countries)
+    public async Task<TopNewsDataDto> FetchTopNews(IReadOnlyList<string> countries)
     {
         var country = PickCountry(countries);
         var nowUnixMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -84,10 +72,10 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
             })
             .ToList();
 
-        return Task.FromResult(new TopNewsDataDto(items, DateTime.UtcNow));
+        return await Task.FromResult(new TopNewsDataDto(items, DateTime.UtcNow));
     }
 
-    public Task<IndicePerformanceDataDto> FetchIndicesPerformanceAsync()
+    public async Task<IndicePerformanceDataDto> FetchIndicesPerformance()
     {
         List<IndicePerformanceDto> values =
         [
@@ -103,10 +91,10 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
             new(10, "KOSPI", "KOR", RandomExtensions.NextDouble(-0.05, 0.05), 2760)
         ];
 
-        return Task.FromResult(new IndicePerformanceDataDto(values, DateTime.UtcNow));
+        return await Task.FromResult(new IndicePerformanceDataDto(values, DateTime.UtcNow));
     }
 
-    public Task<SectorPerformanceDataDto> FetchSectorPerformanceAsync(IReadOnlyList<string> countries)
+    public async Task<SectorPerformanceDataDto> FetchSectorPerformance(IReadOnlyList<string> countries)
     {
         var country = PickCountry(countries);
 
@@ -118,10 +106,10 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
             ))
             .ToList();
 
-        return Task.FromResult(new SectorPerformanceDataDto(values, DateTime.UtcNow));
+        return await Task.FromResult(new SectorPerformanceDataDto(values, DateTime.UtcNow));
     }
 
-    public Task<IReadOnlyList<EquityDto>> FetchWorldEquityAsync()
+    public async Task<IReadOnlyList<EquityDto>> FetchWorldEquityAsync()
     {
         IReadOnlyList<EquityDto> equities = Enum.GetValues<CountryType>()
             .Select(country => new EquityDto(
@@ -132,15 +120,15 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
             ))
             .ToList();
 
-        return Task.FromResult(equities);
+        return await Task.FromResult(equities);
     }
 
-    public async Task<IReadOnlyList<TreeMapDto>> FetchMapPerformanceAsync()
+    public async Task<IReadOnlyList<TreeMapDto>> FetchMapPerformance()
     {
         return await builder.BuildMapPerformanceAsync();
     }
 
-    public Task<TopIndustriesDataDto> FetchTopIndustriesAsync(IReadOnlyList<string> countries, string period)
+    public async Task<TopIndustriesDataDto> FetchTopIndustries(IReadOnlyList<string> countries, string period)
     {
         _ = int.TryParse(string.IsNullOrWhiteSpace(period) ? "1" : period, out _);
         var country = PickCountry(countries);
@@ -155,10 +143,10 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
             .Take(5)
             .ToList();
 
-        return Task.FromResult(new TopIndustriesDataDto(items, DateTime.UtcNow));
+        return await Task.FromResult(new TopIndustriesDataDto(items, DateTime.UtcNow));
     }
 
-    public Task<WorstIndustriesDataDto> FetchWorstIndustriesAsync(IReadOnlyList<string> countries, string period)
+    public async Task<WorstIndustriesDataDto> FetchWorstIndustries(IReadOnlyList<string> countries, string period)
     {
         _ = int.TryParse(string.IsNullOrWhiteSpace(period) ? "1" : period, out _);
         var country = PickCountry(countries);
@@ -173,12 +161,11 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
             .Take(5)
             .ToList();
 
-        return Task.FromResult(new WorstIndustriesDataDto(items, DateTime.UtcNow));
+        return await Task.FromResult(new WorstIndustriesDataDto(items, DateTime.UtcNow));
     }
 
-    public Task<GainersDataDto> FetchGainersAsync(IReadOnlyList<string> countries, string? period = null)
+    public async Task<GainersDataDto> FetchGainers(IReadOnlyList<string> countries, string? period = null)
     {
-        _ = int.TryParse(string.IsNullOrWhiteSpace(period) ? "1" : period, out _);
         var country = PickCountry(countries);
 
         var items = Enum.GetValues<SectorType>()
@@ -191,10 +178,10 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
             .Take(5)
             .ToList();
 
-        return Task.FromResult(new GainersDataDto(items, DateTime.UtcNow));
+        return await Task.FromResult(new GainersDataDto(items, DateTime.UtcNow));
     }
 
-    public Task<LosersDataDto> FetchLosersAsync(IReadOnlyList<string> countries, string? period = null)
+    public async Task<LosersDataDto> FetchLosers(IReadOnlyList<string> countries, string? period = null)
     {
         _ = int.TryParse(string.IsNullOrWhiteSpace(period) ? "1" : period, out _);
         var country = PickCountry(countries);
@@ -209,7 +196,7 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
             .Take(5)
             .ToList();
 
-        return Task.FromResult(new LosersDataDto(items, DateTime.UtcNow));
+        return await Task.FromResult(new LosersDataDto(items, DateTime.UtcNow));
     }
 
     private static string PickCountry(IReadOnlyList<string> countries) =>
