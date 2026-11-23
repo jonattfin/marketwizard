@@ -4,7 +4,7 @@ var server = builder.AddDotnetProject("server", "../MarketWizard.Server/MarketWi
     .WithHttpHealthCheck("/health")
     .WithExternalHttpEndpoints();
 
-var webfrontend = builder.AddViteApp("webfrontend", "../frontend")
+var webfrontend = builder.AddNextJsApp("webfrontend", "../frontend")
     .WithReference(server)
     .WaitFor(server);
 
