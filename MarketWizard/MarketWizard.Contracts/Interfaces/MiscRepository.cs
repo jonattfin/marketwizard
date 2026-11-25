@@ -4,7 +4,7 @@ namespace MarketWizard.Contracts.Interfaces;
 
 public interface IMiscRepository
 {
-    Task<TopNewsDataDto> FetchTopNews(IReadOnlyList<string> countries);
+    Task<TopNewsDataDto> FetchTopNews(IReadOnlyList<string>? countries = null);
     Task<IndicePerformanceDataDto> FetchIndicesPerformance();
     Task<SectorPerformanceDataDto> FetchSectorPerformance(IReadOnlyList<string> countries);
     Task<IReadOnlyList<TreeMapDto>> FetchMapPerformance();

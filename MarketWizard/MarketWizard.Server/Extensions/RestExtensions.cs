@@ -1,3 +1,4 @@
+using MarketWizard.Application;
 using MarketWizard.Contracts.Interfaces;
 
 namespace MarketWizard.Server.Extensions;
@@ -6,41 +7,48 @@ public static class RestExtensions
 {
     public static void MapRestEndpoints(this RouteGroupBuilder api)
     {
-        api.MapGet("indices", async (IMiscRepository repository) => await repository.FetchIndicesPerformance())
+        api.MapGet("indices", async (IAppService appService) => await appService.MiscRepository.FetchIndicesPerformance())
             .WithName("GetIndices");
 
         api.MapGet("top-news",
-                async (IMiscRepository repository, string[] countries) => await repository.FetchTopNews(countries))
+                async (IAppService appService, string[] countries, CancellationToken cancellationToken) =>
+                {
+                    var topNews = await appService.MiscRepository.FetchTopNews(countries);
+
+                    var topNews2 = await appService.CronJobRepository.GetTopNews(cancellationToken);
+
+                    return topNews;
+                })
             .WithName("GetNews");
 
         api.MapGet("top-gainers",
-                async (IMiscRepository repository, string[] countries, string period) =>
-                    await repository.FetchGainers(countries, period))
+                async (IAppService appService, string[] countries, string period) =>
+                    await appService.MiscRepository.FetchGainers(countries, period))
             .WithName("GetTopGainers");
 
         api.MapGet("top-losers",
-                async (IMiscRepository repository, string[] countries, string period) =>
-                    await repository.FetchLosers(countries, period))
+                async (IAppService appService, string[] countries, string period) =>
+                    await appService.MiscRepository.FetchLosers(countries, period))
             .WithName("GetTopLosers");
 
         api.MapGet("top-industries",
-                async (IMiscRepository repository, string[] countries, string period) =>
-                    await repository.FetchTopIndustries(countries, period))
+                async (IAppService appService, string[] countries, string period) =>
+                    await appService.MiscRepository.FetchTopIndustries(countries, period))
             .WithName("GetTopIndustries");
 
         api.MapGet("worst-industries",
-                async (IMiscRepository repository, string[] countries, string period) =>
-                    await repository.FetchWorstIndustries(countries, period))
+                async (IAppService appService, string[] countries, string period) =>
+                    await appService.MiscRepository.FetchWorstIndustries(countries, period))
             .WithName("GetWorstIndustries");
 
         api.MapGet("sector-performance",
-                async (IMiscRepository repository, string[] countries) =>
-                    await repository.FetchSectorPerformance(countries))
+                async (IAppService appService, string[] countries) =>
+                    await appService.MiscRepository.FetchSectorPerformance(countries))
             .WithName("GetSectorPerformance");
 
         api.MapGet("map-performance",
-                async (IMiscRepository repository) =>
-                    await repository.FetchMapPerformance())
+                async (IAppService appService) =>
+                    await appService.MiscRepository.FetchMapPerformance())
             .WithName("GetMapPerformance");
 
         api.MapGet("lazy-portfolios",

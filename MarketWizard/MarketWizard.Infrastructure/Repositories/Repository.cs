@@ -48,7 +48,7 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
 
     private readonly IReadOnlyList<MockEtfSummary> _etfs = CreateEtfs();
 
-    public async Task<TopNewsDataDto> FetchTopNews(IReadOnlyList<string> countries)
+    public async Task<TopNewsDataDto> FetchTopNews(IReadOnlyList<string>? countries)
     {
         var country = PickCountry(countries);
         var nowUnixMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -199,8 +199,8 @@ public sealed class MiscRepository(IMapPerformanceBuilder builder) : IMiscReposi
         return await Task.FromResult(new LosersDataDto(items, DateTime.UtcNow));
     }
 
-    private static string PickCountry(IReadOnlyList<string> countries) =>
-        countries.Count > 0 ? countries[Random.Shared.Next(countries.Count)] : "N/A";
+    private static string PickCountry(IReadOnlyList<string>? countries) =>
+        countries?.Count > 0 ? countries[Random.Shared.Next(countries.Count)] : "N/A";
 
 
     private static List<MockEtfSummary> CreateEtfs() =>

@@ -1,3 +1,4 @@
+using MarketWizard.Application;
 using MarketWizard.Infrastructure;
 using MarketWizard.Server.Extensions;
 
@@ -8,9 +9,11 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddProblemDetails();
-builder.Services.AddInfrastructureServices();
 
-builder.Services.AddGraphQLServices();
+builder.AddApplicationServices();
+builder.AddInfrastructureServices();
+
+// builder.Services.AddGraphQLServices();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -29,7 +32,7 @@ var api = app.MapGroup("/api");
 api.MapRestEndpoints();
 
 app.MapDefaultEndpoints();
-app.MapGraphQL();
+// app.MapGraphQL();
 
 app.UseFileServer();
 
