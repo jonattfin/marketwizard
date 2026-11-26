@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, within } from "storybook/test";
-
 import { delay } from "es-toolkit";
+import { graphql, HttpResponse } from "msw";
+import { expect, within } from "storybook/test";
+import { PortfolioRepository } from "@/app/database/repositories/in-memory/portfolio-repository";
 import LazyPortfolioDetails from "@/app/lazy-portfolios/[id]/components/lazy-portfolio-details";
-import { http, HttpResponse } from "msw";
-import { unitOfWork } from "@/app/database/unit-of-work";
+
+const repository = new PortfolioRepository();
 
 const id = 1;
 
@@ -18,11 +19,20 @@ const meta = {
     layout: "fullscreen",
     msw: {
       handlers: [
-        http.get(`api/lazy-portfolios/${id}`, async () => {
-          const portfolio =
-            await unitOfWork.portfolioRepository.fetchLazyPortfolioById(id);
-          return HttpResponse.json(portfolio);
-        }),
+        graphql.query<{ lazyPortfolioById: unknown }, { id: number }>(
+          "LazyPortfolioById",
+          async ({ variables }) => {
+            const portfolio = await repository.fetchLazyPortfolioById(
+              variables.id,
+            );
+            if (!portfolio)
+              return HttpResponse.json({ data: { lazyPortfolioById: null } });
+            const { "1d": oneDay, ...rest } = portfolio;
+            return HttpResponse.json({
+              data: { lazyPortfolioById: { ...rest, oneDay } },
+            });
+          },
+        ),
       ],
     },
   },
@@ -37,7 +47,7 @@ export const WithData: Story = {
 
     const canvas = within(canvasElement);
 
-    const title = canvas.getByTestId("portfolio-title");
-    await expect(title).toBeDefined();
+    const title = await canvas.findByTestId("portfolio-title");
+    await expect(title).toHaveTextContent("Ray Dalio All Weather Portfolio");
   },
 };

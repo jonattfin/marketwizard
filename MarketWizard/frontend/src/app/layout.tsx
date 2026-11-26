@@ -15,6 +15,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Header from "@/shared/header";
 import Footer from "@/shared/footer";
 import { Toaster } from "@/components/ui/toaster";
+import { MarketDataSubscription } from "@/shared/market-data-subscription";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({
                 <main>
                   <Container>
                     <QueryClientProvider client={queryClient}>
+                      <MarketDataSubscription />
                       <Flex
                         gap="10"
                         direction="column"

@@ -12,6 +12,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { SectorPerformanceDataType, SectorType } from "@/shared/types";
 import Loading from "@/shared/loading";
+import { getSectorPerformance } from "@/shared/graphql";
 import { drop, take } from "es-toolkit";
 import { useContext, useMemo } from "react";
 import {
@@ -36,12 +37,7 @@ const useSectorPerformance = () => {
 
   return useQuery<SectorPerformanceDataType>({
     queryKey: ["sector-performance", countries],
-    queryFn: async () => {
-      const response = await fetch(
-        `/api/sector-performance?countries=${encodeURIComponent(JSON.stringify(countries))}`,
-      );
-      return await response.json();
-    },
+    queryFn: () => getSectorPerformance(countries),
   });
 };
 

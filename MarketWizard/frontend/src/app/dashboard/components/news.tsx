@@ -2,6 +2,7 @@
 
 import { Icon, Table } from "@chakra-ui/react";
 import Loading from "@/shared/loading";
+import { getTopNews } from "@/shared/graphql";
 import { TopNewsDataType } from "@/shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
@@ -15,12 +16,7 @@ const useTopNews = () => {
 
   return useQuery<TopNewsDataType>({
     queryKey: ["top-news", countries],
-    queryFn: async () => {
-      const response = await fetch(
-        `api/top-news?countries=${encodeURIComponent(JSON.stringify(countries))}`,
-      );
-      return await response.json();
-    },
+    queryFn: () => getTopNews(countries),
   });
 };
 

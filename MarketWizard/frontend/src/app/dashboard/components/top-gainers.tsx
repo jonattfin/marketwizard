@@ -1,6 +1,12 @@
 "use client";
 
 import Loading from "@/shared/loading";
+import {
+  getTopGainers,
+  getTopLosers,
+  getTopIndustries,
+  getWorstIndustries,
+} from "@/shared/graphql";
 import { FormatNumber, Table, Tag } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -19,12 +25,7 @@ const useGainers = (period: number) => {
 
   return useQuery<GainersDataType>({
     queryKey: ["top-gainers", period, countries],
-    queryFn: async () => {
-      const response = await fetch(
-        `/api/top-gainers?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
-      );
-      return await response.json();
-    },
+    queryFn: () => getTopGainers(countries, String(period)),
   });
 };
 
@@ -33,12 +34,7 @@ const useLosers = (period: number) => {
 
   return useQuery<LosersDataType>({
     queryKey: ["top-losers", period, countries],
-    queryFn: async () => {
-      const response = await fetch(
-        `/api/top-losers?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
-      );
-      return await response.json();
-    },
+    queryFn: () => getTopLosers(countries, String(period)),
   });
 };
 
@@ -47,12 +43,7 @@ const useTopIndustries = (period: number) => {
 
   const { isPending, error, data } = useQuery<TopIndustriesDataType>({
     queryKey: ["top-industries", period, countries],
-    queryFn: async () => {
-      const response = await fetch(
-        `/api/top-industries?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
-      );
-      return await response.json();
-    },
+    queryFn: () => getTopIndustries(countries, String(period)),
   });
 
   return {
@@ -67,12 +58,7 @@ const useWorstIndustries = (period: number) => {
 
   const { isPending, error, data } = useQuery<WorstIndustriesDataType>({
     queryKey: ["worst-industries", period, countries],
-    queryFn: async () => {
-      const response = await fetch(
-        `/api/worst-industries?period=${encodeURIComponent(period)}&countries=${encodeURIComponent(JSON.stringify(countries))}`,
-      );
-      return await response.json();
-    },
+    queryFn: () => getWorstIndustries(countries, String(period)),
   });
 
   return {

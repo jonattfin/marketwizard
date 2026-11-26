@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, within } from "storybook/test";
-import Watchlist from "@/app/watchlist/components/watchlist";
 import { delay } from "es-toolkit";
-
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http } from "msw";
+import { expect, within } from "storybook/test";
 import { unitOfWork } from "@/app/database/unit-of-work";
+import Watchlist from "@/app/watchlist/components/watchlist";
 
 const meta = {
   title: "MarketWizard/Watchlist/Watchlist",
@@ -15,8 +14,10 @@ const meta = {
     layout: "fullscreen",
     msw: {
       handlers: [
-        http.get("/api/watchlists", async () => {
-          const watchlists = await unitOfWork.watchlistRepository.fetchWatchlist();
+        http.get("/api/watchlist", async ({ request }) => {
+          const cursor = new URL(request.url).searchParams.get("cursor") ?? "0";
+          const watchlists =
+            await unitOfWork.watchlistRepository.fetchWatchlist(cursor);
           return HttpResponse.json(watchlists);
         }),
       ],

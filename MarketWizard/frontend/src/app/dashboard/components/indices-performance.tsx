@@ -1,6 +1,7 @@
 "use client";
 
 import Loading from "@/shared/loading";
+import { getIndices } from "@/shared/graphql";
 import { Grid, GridItem } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { IndicePerformanceDataType } from "@/shared/types";
@@ -16,10 +17,7 @@ const WorldMap = React.lazy(
 export const useIndicesPerformance = () => {
   return useQuery<IndicePerformanceDataType>({
     queryKey: ["indices"],
-    queryFn: async () => {
-      const response = await fetch("/api/indices");
-      return await response.json();
-    },
+    queryFn: getIndices,
   });
 };
 

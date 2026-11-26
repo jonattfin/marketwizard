@@ -5,14 +5,12 @@ import { Breadcrumb, Card, Grid, Image } from "@chakra-ui/react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "@/shared/loading";
+import { getEtfs } from "@/shared/graphql";
 
 const useEtfThemes = () => {
   const { isPending, error, data } = useQuery<EtfThemeType[]>({
     queryKey: ["etf"],
-    queryFn: async () => {
-      const response = await fetch("/api/etf");
-      return await response.json();
-    },
+    queryFn: getEtfs,
   });
 
   return { isPending, error, data: data ?? [] };

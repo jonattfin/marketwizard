@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { EtfThemeByIdType } from "@/shared/types";
 import Loading from "@/shared/loading";
+import { getEtfById } from "@/shared/graphql";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 export type EtfThemeListProps = {
@@ -23,12 +24,9 @@ export type EtfThemeListProps = {
 };
 
 const useEtfTheme = (theme: string) => {
-  const { isPending, error, data } = useQuery<EtfThemeByIdType>({
+  const { isPending, error, data } = useQuery<EtfThemeByIdType | null>({
     queryKey: ["etf", theme],
-    queryFn: async () => {
-      const response = await fetch(`/api/etf/${theme}`);
-      return await response.json();
-    },
+    queryFn: () => getEtfById(theme),
   });
 
   return { isPending, error, data: data };

@@ -3,6 +3,7 @@ import { useNivoTheme } from "@/shared/nivoTheme";
 import { useQuery } from "@tanstack/react-query";
 import { TreeMapType } from "@/shared/types";
 import Loading from "@/shared/loading";
+import { getMapPerformance } from "@/shared/graphql";
 import { useContext, useMemo } from "react";
 import { CountryContext } from "@/shared/context/country-context";
 
@@ -13,10 +14,7 @@ export type MarketTreemapType = {
 const useTreeMap = () => {
   return useQuery<TreeMapType[]>({
     queryKey: ["tree-maps"],
-    queryFn: async () => {
-      const response = await fetch(`/api/map-performance`);
-      return await response.json();
-    },
+    queryFn: getMapPerformance,
   });
 };
 

@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, within } from "storybook/test";
-
 import { delay } from "es-toolkit";
+import { graphql, HttpResponse } from "msw";
+import { expect, within } from "storybook/test";
+import { PortfolioRepository } from "@/app/database/repositories/in-memory/portfolio-repository";
 import LazyPortfolios from "@/app/lazy-portfolios/page";
-import { http, HttpResponse } from "msw";
-import { unitOfWork } from "@/app/database/unit-of-work";
+
+const repository = new PortfolioRepository();
 
 const meta = {
   title: "MarketWizard/Lazy Portfolios/Lazy Portfolios List",
@@ -15,9 +16,20 @@ const meta = {
     layout: "fullscreen",
     msw: {
       handlers: [
-        http.get("api/lazy-portfolios", async () => {
-          const portfolios = await unitOfWork.portfolioRepository.fetchLazyPortfolios();
-          return HttpResponse.json(portfolios);
+        graphql.query("LazyPortfolios", async () => {
+          const [numberOfLazyPortfolios, items] =
+            await repository.fetchLazyPortfolios(1, Number.MAX_SAFE_INTEGER);
+          return HttpResponse.json({
+            data: {
+              lazyPortfolios: {
+                numberOfLazyPortfolios,
+                items: items.map(({ "1d": oneDay, ...portfolio }) => ({
+                  ...portfolio,
+                  oneDay,
+                })),
+              },
+            },
+          });
         }),
       ],
     },
@@ -33,7 +45,8 @@ export const WithData: Story = {
 
     const canvas = within(canvasElement);
 
-    const title = canvas.getByTestId("lazy-portfolio-link");
-    await expect(title).toBeDefined();
+    await expect(
+      await canvas.findByText("Ray Dalio All Weather Portfolio"),
+    ).toBeInTheDocument();
   },
 };

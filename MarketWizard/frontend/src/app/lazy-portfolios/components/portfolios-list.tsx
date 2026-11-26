@@ -14,6 +14,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { LazyPortfolioType } from "@/shared/types";
 import Loading from "@/shared/loading";
+import { getLazyPortfolios } from "@/shared/graphql";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { useState } from "react";
 
@@ -21,17 +22,28 @@ import LazyPortfoliosCards from "@/app/lazy-portfolios/components/lazy-portfolio
 import { PortfoliosTable } from "@/app/lazy-portfolios/components/portfolios-table";
 
 const useLazyPortfolios = (pageNumber: number, pageSize: number) => {
-  const { isPending, error, data } = useQuery<[number, LazyPortfolioType[]]>({
+  const { isPending, error, data } = useQuery<{
+    numberOfLazyPortfolios: number;
+    items: LazyPortfolioType[];
+  }>({
     queryKey: ["lazy-portfolios", pageNumber, pageSize],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/lazy-portfolios/?pageNumber=${encodeURIComponent(pageNumber)}&pageSize=${pageSize}`,
-      );
-      return await response.json();
+      const portfolios = await getLazyPortfolios();
+      return {
+        ...portfolios,
+        items: portfolios.items.slice(
+          (pageNumber - 1) * pageSize,
+          pageNumber * pageSize,
+        ),
+      };
     },
   });
 
-  return { isPending, error, data: data ?? [0, []] };
+  return {
+    isPending,
+    error,
+    data: data ?? { numberOfLazyPortfolios: 0, items: [] },
+  };
 };
 
 export default function LazyPortfoliosList() {

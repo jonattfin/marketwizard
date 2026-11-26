@@ -8,14 +8,12 @@ import { CorrelationTable } from "@/app/lazy-portfolios/[id]/components/correlat
 import { LazyPortfolioType } from "@/shared/types";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "@/shared/loading";
+import { getLazyPortfolioById } from "@/shared/graphql";
 
-const useLazyPortfolioById = (id: string | undefined) => {
-  return useQuery<LazyPortfolioType | undefined>({
+const useLazyPortfolioById = (id: string) => {
+  return useQuery<LazyPortfolioType | null>({
     queryKey: ["lazy-portfolio", id],
-    queryFn: async () => {
-      const response = await fetch(`/api/lazy-portfolios/${id}`);
-      return await response.json();
-    },
+    queryFn: () => getLazyPortfolioById(Number(id)),
   });
 };
 

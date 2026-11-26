@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, within } from "storybook/test";
-
-import Maps from "@/app/maps/page";
 import { delay } from "es-toolkit";
-import { http, HttpResponse } from "msw";
-import { unitOfWork } from "@/app/database/unit-of-work";
+import { graphql, HttpResponse } from "msw";
+import { expect, within } from "storybook/test";
+import { MiscRepository } from "@/app/database/repositories/in-memory/misc-repository";
+import Maps from "@/app/maps/page";
+
+const repository = new MiscRepository();
 
 const meta = {
   title: "MarketWizard/Maps",
@@ -15,13 +16,13 @@ const meta = {
     layout: "fullscreen",
     msw: {
       handlers: [
-        http.get("/api/indices", async () => {
-          const data = await unitOfWork.miscRepository.fetchIndicesPerformance();
-          return HttpResponse.json(data);
+        graphql.query("Indices", async () => {
+          const indices = await repository.fetchIndicesPerformance();
+          return HttpResponse.json({ data: { indices } });
         }),
-        http.get("/api/map-performance", async () => {
-          const data = await unitOfWork.miscRepository.fetchMapPerformance();
-          return HttpResponse.json(data);
+        graphql.query("MapPerformance", async () => {
+          const mapPerformance = await repository.fetchMapPerformance();
+          return HttpResponse.json({ data: { mapPerformance } });
         }),
       ],
     },
