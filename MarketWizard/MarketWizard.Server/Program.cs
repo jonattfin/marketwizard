@@ -13,7 +13,7 @@ builder.Services.AddProblemDetails();
 builder.AddApplicationServices();
 builder.AddInfrastructureServices();
 
-// builder.Services.AddGraphQLServices();
+builder.Services.AddGraphQLServices();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -24,6 +24,7 @@ app.Services.UseMarketSyncScheduler();
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
+app.UseWebSockets();
 
 if (app.Environment.IsDevelopment())
 {
@@ -34,7 +35,7 @@ var api = app.MapGroup("/api");
 api.MapRestEndpoints();
 
 app.MapDefaultEndpoints();
-// app.MapGraphQL();
+app.MapGraphQL();
 
 app.UseFileServer();
 

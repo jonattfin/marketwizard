@@ -6,7 +6,9 @@ namespace MarketWizard.Application.Notifications;
 
 public record MarketSyncNotification : INotification;
 
-public class MarketSyncNotificationHandler(IMarketSyncRepository miscRepository, ICronJobRepository cronJobRepository)
+public record MarketDataUpdatedNotification(DateTime UpdatedAt) : INotification;
+
+public class MarketSyncNotificationHandler(IMarketSyncRepository miscRepository, ICronJobRepository cronJobRepository, IPublisher publisher)
     : INotificationHandler<MarketSyncNotification>
 {
     public async Task Handle(MarketSyncNotification notification, CancellationToken cancellationToken)
@@ -19,5 +21,6 @@ public class MarketSyncNotificationHandler(IMarketSyncRepository miscRepository,
             JsonSerializer.Serialize(indicesPerformance),
             cancellationToken);
         await miscRepository.UpdateCache(topNews, indicesPerformance, cancellationToken);
+        await publisher.Publish(new MarketDataUpdatedNotification(DateTime.UtcNow), cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Reflection;
 using Coravel;
 using MarketWizard.Application.Notifications;
 using MarketWizard.Contracts.Interfaces;
@@ -68,14 +69,43 @@ public class MarketSyncNotificationTests
     }
 
     [Fact]
+    public async Task Successful_handler_publishes_update()
+    {
+        var misc = new Misc();
+        var cron = new Cron();
+        var publisher = DispatchProxy.Create<IPublisher, RecordingPublisher>();
+        var handler = new MarketSyncNotificationHandler(misc, cron, publisher);
+
+        await handler.Handle(new MarketSyncNotification(), CancellationToken.None);
+
+        Assert.Equal(1, cron.Saves);
+        Assert.True(misc.CacheUpdated);
+        Assert.IsType<MarketDataUpdatedNotification>(Assert.Single(((RecordingPublisher)publisher).Notifications));
+    }
+
+    [Fact]
+    public async Task Handler_does_not_publish_when_save_fails()
+    {
+        var misc = new Misc();
+        var publisher = DispatchProxy.Create<IPublisher, RecordingPublisher>();
+        var handler = new MarketSyncNotificationHandler(misc, new Cron { Fail = true }, publisher);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Handle(new MarketSyncNotification(), CancellationToken.None));
+        Assert.False(misc.CacheUpdated);
+        Assert.Empty(((RecordingPublisher)publisher).Notifications);
+    }
+
+    [Fact]
     public async Task Handler_does_not_save_when_fetch_fails()
     {
         var misc = new Misc { Fail = true };
         var cron = new Cron();
-        var handler = new MarketSyncNotificationHandler(misc, cron);
+        var publisher = DispatchProxy.Create<IPublisher, RecordingPublisher>();
+        var handler = new MarketSyncNotificationHandler(misc, cron, publisher);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Handle(new MarketSyncNotification(), CancellationToken.None));
         Assert.Equal(0, cron.Saves);
+        Assert.Empty(((RecordingPublisher)publisher).Notifications);
     }
 
 
@@ -85,8 +115,10 @@ public class MarketSyncNotificationTests
         public string? Indices { get; private set; }
         public CancellationToken Token { get; private set; }
         public int Saves { get; private set; }
+        public bool Fail { get; init; }
         public Task SaveAsync(string? topNews, string? indexPerformance, CancellationToken cancellationToken = default)
         {
+            if (Fail) throw new InvalidOperationException();
             News = topNews;
             Indices = indexPerformance;
             Token = cancellationToken;
@@ -105,9 +137,14 @@ public class MarketSyncNotificationTests
         public int NewsCalls { get; private set; }
         public int IndicesCalls { get; private set; }
         public bool Fail { get; init; }
+        public bool CacheUpdated { get; private set; }
         public Task<TopNewsDataDto> FetchFreshTopNews() => FetchTopNews();
         public Task<IndicePerformanceDataDto> FetchFreshIndicesPerformance() => FetchIndicesPerformance();
-        public Task UpdateCache(TopNewsDataDto topNews, IndicePerformanceDataDto indicesPerformance, CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task UpdateCache(TopNewsDataDto topNews, IndicePerformanceDataDto indicesPerformance, CancellationToken cancellationToken)
+        {
+            CacheUpdated = true;
+            return Task.CompletedTask;
+        }
         public Task<TopNewsDataDto> FetchTopNews(IReadOnlyList<string>? countries = null)
         {
             NewsCalls++;
@@ -121,5 +158,16 @@ public class MarketSyncNotificationTests
         public Task<WorstIndustriesDataDto> FetchWorstIndustries(IReadOnlyList<string> countries, string period) => throw new NotSupportedException();
         public Task<GainersDataDto> FetchGainers(IReadOnlyList<string> countries, string? period = null) => throw new NotSupportedException();
         public Task<LosersDataDto> FetchLosers(IReadOnlyList<string> countries, string? period = null) => throw new NotSupportedException();
+    }
+}
+
+public class RecordingPublisher : System.Reflection.DispatchProxy
+{
+    public List<object> Notifications { get; } = [];
+
+    protected override object? Invoke(System.Reflection.MethodInfo? targetMethod, object?[]? args)
+    {
+        Notifications.Add(args![0]!);
+        return Task.CompletedTask;
     }
 }

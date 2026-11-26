@@ -1,8 +1,10 @@
 using System.Text.Json;
+using System.Reflection;
 using MarketWizard.Application.Notifications;
 using MarketWizard.Contracts.Interfaces;
 using MarketWizard.Contracts.Models;
 using MarketWizard.Infrastructure.Repositories;
+using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
@@ -21,7 +23,7 @@ public class CachedMiscRepositoryTests
         await repository.FetchIndicesPerformance();
         inner.Date = FakeRepository.Timestamp.AddDays(1);
         var cron = new Cron();
-        var handler = new MarketSyncNotificationHandler(repository, cron);
+        var handler = new MarketSyncNotificationHandler(repository, cron, DispatchProxy.Create<IPublisher, RecordingPublisher>());
 
         await handler.Handle(new MarketSyncNotification(), CancellationToken.None);
 
@@ -40,7 +42,7 @@ public class CachedMiscRepositoryTests
         await repository.FetchTopNews();
         await repository.FetchIndicesPerformance();
         inner.Date = FakeRepository.Timestamp.AddDays(1);
-        var handler = new MarketSyncNotificationHandler(repository, new Cron { Fail = true });
+        var handler = new MarketSyncNotificationHandler(repository, new Cron { Fail = true }, DispatchProxy.Create<IPublisher, RecordingPublisher>());
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Handle(new MarketSyncNotification(), CancellationToken.None));
 
@@ -60,7 +62,7 @@ public class CachedMiscRepositoryTests
         cache.FailSet = true;
         var cron = new Cron();
 
-        await new MarketSyncNotificationHandler(repository, cron).Handle(new MarketSyncNotification(), CancellationToken.None);
+        await new MarketSyncNotificationHandler(repository, cron, DispatchProxy.Create<IPublisher, RecordingPublisher>()).Handle(new MarketSyncNotification(), CancellationToken.None);
 
         Assert.Equal(inner.Date, JsonSerializer.Deserialize<TopNewsDataDto>(cron.News!)!.Date);
         Assert.Empty(cache.Values);
