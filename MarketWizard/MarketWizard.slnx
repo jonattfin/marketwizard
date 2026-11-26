@@ -2,6 +2,7 @@
   <Project Path="MarketWizard.AppHost/MarketWizard.AppHost.csproj" />
   <Project Path="MarketWizard.Application/MarketWizard.Application.csproj" />
   <Project Path="MarketWizard.Contracts/MarketWizard.Contracts.csproj" />
+  <Project Path="MarketWizard.Dispatch.Tests/MarketWizard.Dispatch.Tests.csproj" />
   <Project Path="MarketWizard.Infrastructure/MarketWizard.Infrastructure.csproj" />
   <Project Path="MarketWizard.Server/MarketWizard.Server.csproj" />
 </Solution>

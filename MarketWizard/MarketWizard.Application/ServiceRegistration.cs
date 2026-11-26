@@ -7,7 +7,7 @@ public static class ServiceRegistration
 {
     public static TBuilder AddApplicationServices<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
-        builder.Services.AddScoped<IAppService, AppService>();
+        builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(ServiceRegistration).Assembly));
         
         return builder;
     }

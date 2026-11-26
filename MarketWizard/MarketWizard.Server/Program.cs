@@ -20,6 +20,8 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.Services.UseMarketSyncScheduler();
+
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
 

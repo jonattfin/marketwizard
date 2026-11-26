@@ -1,5 +1,5 @@
-using MarketWizard.Application;
-using MarketWizard.Contracts.Interfaces;
+using MarketWizard.Application.Queries;
+using MediatR;
 
 namespace MarketWizard.Server.Extensions;
 
@@ -7,68 +7,62 @@ public static class RestExtensions
 {
     public static void MapRestEndpoints(this RouteGroupBuilder api)
     {
-        api.MapGet("indices", async (IAppService appService) => await appService.MiscRepository.FetchIndicesPerformance())
+        api.MapGet("indices", async (ISender sender, CancellationToken cancellationToken) => await sender.Send(new GetIndicesQuery(), cancellationToken))
             .WithName("GetIndices");
 
         api.MapGet("top-news",
-                async (IAppService appService, string[] countries, CancellationToken cancellationToken) =>
-                {
-                    var topNews = await appService.MiscRepository.FetchTopNews(countries);
-
-                    var topNews2 = await appService.CronJobRepository.GetTopNews(cancellationToken);
-
-                    return topNews;
-                })
+                async (ISender sender, string[] countries, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetTopNewsQuery(countries), cancellationToken))
             .WithName("GetNews");
 
         api.MapGet("top-gainers",
-                async (IAppService appService, string[] countries, string period) =>
-                    await appService.MiscRepository.FetchGainers(countries, period))
+                async (ISender sender, string[] countries, string period, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetGainersQuery(countries, period), cancellationToken))
             .WithName("GetTopGainers");
 
         api.MapGet("top-losers",
-                async (IAppService appService, string[] countries, string period) =>
-                    await appService.MiscRepository.FetchLosers(countries, period))
+                async (ISender sender, string[] countries, string period, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetLosersQuery(countries, period), cancellationToken))
             .WithName("GetTopLosers");
 
         api.MapGet("top-industries",
-                async (IAppService appService, string[] countries, string period) =>
-                    await appService.MiscRepository.FetchTopIndustries(countries, period))
+                async (ISender sender, string[] countries, string period, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetTopIndustriesQuery(countries, period), cancellationToken))
             .WithName("GetTopIndustries");
 
         api.MapGet("worst-industries",
-                async (IAppService appService, string[] countries, string period) =>
-                    await appService.MiscRepository.FetchWorstIndustries(countries, period))
+                async (ISender sender, string[] countries, string period, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetWorstIndustriesQuery(countries, period), cancellationToken))
             .WithName("GetWorstIndustries");
 
         api.MapGet("sector-performance",
-                async (IAppService appService, string[] countries) =>
-                    await appService.MiscRepository.FetchSectorPerformance(countries))
+                async (ISender sender, string[] countries, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetSectorPerformanceQuery(countries), cancellationToken))
             .WithName("GetSectorPerformance");
 
         api.MapGet("map-performance",
-                async (IAppService appService) =>
-                    await appService.MiscRepository.FetchMapPerformance())
+                async (ISender sender, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetMapPerformanceQuery(), cancellationToken))
             .WithName("GetMapPerformance");
 
         api.MapGet("lazy-portfolios",
-                async (IPortfolioRepository repository) =>
-                    await repository.FetchLazyPortfolios())
+                async (ISender sender, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetLazyPortfoliosQuery(), cancellationToken))
             .WithName("GetLazyPortfolios");
 
         api.MapGet("lazy-portfolios/{id:int}",
-                async (IPortfolioRepository repository, int id) =>
-                    await repository.FetchLazyPortfolioById(id))
+                async (ISender sender, int id, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetLazyPortfolioByIdQuery(id), cancellationToken))
             .WithName("GetLazyPortfolioById");
 
         api.MapGet("etf",
-                async (IEtfRepository repository) =>
-                    await repository.FetchEtfs())
+                async (ISender sender, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetEtfsQuery(), cancellationToken))
             .WithName("GetEtfs");
 
         api.MapGet("etf/{id}",
-                async (IEtfRepository repository, string id) =>
-                    await repository.FetchEtfById(id))
+                async (ISender sender, string id, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetEtfByIdQuery(id), cancellationToken))
             .WithName("GetEtfById");
     }
 }
