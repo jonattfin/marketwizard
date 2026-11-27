@@ -8,6 +8,7 @@ public class CronJob
     public string? IndexPerformance { get; set; }
     public string? TopNews { get; set; }
     public string? SectorPerformance { get; set; }
+    public string? MapPerformance { get; set; }
     
     public string? Gainers { get; set; }
     public string? Losers { get; set; }

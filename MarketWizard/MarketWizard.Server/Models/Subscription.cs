@@ -17,6 +17,7 @@ public class MarketDataUpdatedHandler(ITopicEventSender sender) : INotificationH
     public async Task Handle(MarketDataUpdatedNotification notification, CancellationToken cancellationToken)
     {
         await sender.SendAsync(nameof(Subscription.MarketDataUpdated),
-            new MarketDataUpdate(notification.UpdatedAt, ["indices", "topNews"]), cancellationToken);
+            new MarketDataUpdate(notification.UpdatedAt,
+                ["indices", "topNews", "sectorPerformance", "mapPerformance", "topIndustries", "worstIndustries", "topGainers", "topLosers"]), cancellationToken);
     }
 }

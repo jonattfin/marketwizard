@@ -1,10 +1,7 @@
 using System.Text.Json;
-using System.Reflection;
-using MarketWizard.Application.Notifications;
 using MarketWizard.Contracts.Interfaces;
 using MarketWizard.Contracts.Models;
 using MarketWizard.Infrastructure.Repositories;
-using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
@@ -14,23 +11,20 @@ namespace MarketWizard.Dispatch.Tests;
 public class CachedMiscRepositoryTests
 {
     [Fact]
-    public async Task Sync_fetches_fresh_values_and_updates_cached_results_after_save()
+    public async Task Save_invalidates_all_cached_argument_variants()
     {
         var inner = new FakeRepository();
         var cache = new FakeCache();
         var repository = Create(inner, cache);
-        await repository.FetchTopNews();
-        await repository.FetchIndicesPerformance();
+        await repository.SaveAsync(Snapshot());
+        await FetchVariants(repository);
         inner.Date = FakeRepository.Timestamp.AddDays(1);
-        var cron = new Cron();
-        var handler = new MarketSyncNotificationHandler(repository, cron, DispatchProxy.Create<IPublisher, RecordingPublisher>());
-
-        await handler.Handle(new MarketSyncNotification(), CancellationToken.None);
-
-        Assert.Equal(inner.Date, JsonSerializer.Deserialize<TopNewsDataDto>(cron.News!)!.Date);
-        Assert.Equal(inner.Date, JsonSerializer.Deserialize<IndicePerformanceDataDto>(cron.Indices!)!.Date);
+        await repository.SaveAsync(Snapshot());
+        await FetchVariants(repository);
+        Assert.Equal(20, inner.Calls);
         Assert.Equal(inner.Date, (await repository.FetchTopNews()).Date);
         Assert.Equal(inner.Date, (await repository.FetchIndicesPerformance()).Date);
+        Assert.Equal(20, inner.Calls);
     }
 
     [Fact]
@@ -39,33 +33,29 @@ public class CachedMiscRepositoryTests
         var inner = new FakeRepository();
         var cache = new FakeCache();
         var repository = Create(inner, cache);
-        await repository.FetchTopNews();
-        await repository.FetchIndicesPerformance();
+        await repository.SaveAsync(Snapshot());
+        await FetchVariants(repository);
         inner.Date = FakeRepository.Timestamp.AddDays(1);
-        var handler = new MarketSyncNotificationHandler(repository, new Cron { Fail = true }, DispatchProxy.Create<IPublisher, RecordingPublisher>());
-
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Handle(new MarketSyncNotification(), CancellationToken.None));
-
+        inner.FailSave = true;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.SaveAsync(Snapshot()));
+        await FetchVariants(repository);
+        Assert.Equal(10, inner.Calls);
         Assert.Equal(FakeRepository.Timestamp, (await repository.FetchTopNews()).Date);
         Assert.Equal(FakeRepository.Timestamp, (await repository.FetchIndicesPerformance()).Date);
     }
 
     [Fact]
-    public async Task Failed_cache_refresh_invalidates_old_values_and_keeps_saved_data()
+    public async Task Failed_version_update_disables_old_cached_values()
     {
         var inner = new FakeRepository();
         var cache = new FakeCache();
         var repository = Create(inner, cache);
-        await repository.FetchTopNews();
-        await repository.FetchIndicesPerformance();
+        await repository.SaveAsync(Snapshot());
+        await FetchVariants(repository);
         inner.Date = FakeRepository.Timestamp.AddDays(1);
         cache.FailSet = true;
-        var cron = new Cron();
-
-        await new MarketSyncNotificationHandler(repository, cron, DispatchProxy.Create<IPublisher, RecordingPublisher>()).Handle(new MarketSyncNotification(), CancellationToken.None);
-
-        Assert.Equal(inner.Date, JsonSerializer.Deserialize<TopNewsDataDto>(cron.News!)!.Date);
-        Assert.Empty(cache.Values);
+        await repository.SaveAsync(Snapshot());
+        Assert.Equal(2, inner.Saves);
         Assert.Equal(inner.Date, (await repository.FetchTopNews()).Date);
         Assert.Equal(inner.Date, (await repository.FetchIndicesPerformance()).Date);
     }
@@ -77,6 +67,7 @@ public class CachedMiscRepositoryTests
         var cache = new FakeCache();
         var repository = Create(inner, cache);
         var countries = new[] { "US", "GB" };
+        await repository.SaveAsync(Snapshot());
 
         await AssertCached(() => repository.FetchTopNews(countries));
         await AssertCached(() => repository.FetchIndicesPerformance());
@@ -88,9 +79,9 @@ public class CachedMiscRepositoryTests
         await AssertCached(() => repository.FetchLosers(countries, "week"));
 
         Assert.Equal(8, inner.Calls);
-        Assert.Equal(8, cache.Values.Count);
-        Assert.Equal(8, cache.Options.Count);
-        Assert.All(cache.Options, options => Assert.Equal(TimeSpan.FromMinutes(5), options.AbsoluteExpirationRelativeToNow));
+        Assert.Equal(9, cache.Values.Count);
+        Assert.Equal(9, cache.Options.Count);
+        Assert.All(cache.Options.Skip(1), options => Assert.Equal(TimeSpan.FromMinutes(5), options.AbsoluteExpirationRelativeToNow));
     }
 
     [Fact]
@@ -99,6 +90,7 @@ public class CachedMiscRepositoryTests
         var inner = new FakeRepository();
         var cache = new FakeCache();
         var repository = Create(inner, cache);
+        await repository.SaveAsync(Snapshot());
 
         await repository.FetchTopNews(null);
         await repository.FetchTopNews(Array.Empty<string>());
@@ -114,7 +106,7 @@ public class CachedMiscRepositoryTests
         await repository.FetchWorstIndustries(new[] { "US" }, "week");
 
         Assert.Equal(12, inner.Calls);
-        Assert.Equal(12, cache.Values.Count);
+        Assert.Equal(13, cache.Values.Count);
 
         await repository.FetchTopNews(new[] { "US", "GB" });
         await repository.FetchGainers(new[] { "US" }, "week");
@@ -130,6 +122,9 @@ public class CachedMiscRepositoryTests
         var inner = new FakeRepository();
         var cache = new FakeCache { FailGet = failGet, FailSet = failSet };
         var repository = Create(inner, cache);
+        cache.FailSet = false;
+        await repository.SaveAsync(Snapshot());
+        cache.FailSet = failSet;
 
         var result = await repository.FetchTopNews(new[] { "US" });
 
@@ -143,19 +138,37 @@ public class CachedMiscRepositoryTests
         var inner = new FakeRepository { Fail = true };
         var cache = new FakeCache();
         var repository = Create(inner, cache);
+        await repository.SaveAsync(Snapshot());
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => repository.FetchTopNews());
-        Assert.Empty(cache.Values);
-        Assert.Empty(cache.Options);
+        Assert.Single(cache.Values);
+        Assert.Single(cache.Options);
         inner.Fail = false;
         await repository.FetchTopNews();
         await repository.FetchTopNews();
         Assert.Equal(2, inner.Calls);
-        Assert.Single(cache.Values);
+        Assert.Equal(2, cache.Values.Count);
     }
 
-    private static CachedMiscRepository Create(FakeRepository inner, FakeCache cache) =>
-        new(inner, cache, NullLogger<CachedMiscRepository>.Instance);
+    private static CachedCronJobRepository Create(FakeRepository inner, FakeCache cache) =>
+        new(inner, cache, NullLogger<CachedCronJobRepository>.Instance);
+
+    private static MarketSnapshot Snapshot() => new(new([], FakeRepository.Timestamp), new([], FakeRepository.Timestamp),
+        new([], FakeRepository.Timestamp), [], [], [], [], []);
+
+    private static async Task FetchVariants(ICronJobRepository repository)
+    {
+        await repository.FetchTopNews();
+        await repository.FetchTopNews(["US"]);
+        await repository.FetchIndicesPerformance();
+        await repository.FetchSectorPerformance(["US"]);
+        await repository.FetchMapPerformance();
+        await repository.FetchTopIndustries(["US"], "1");
+        await repository.FetchWorstIndustries(["US"], "1");
+        await repository.FetchGainers(["US"], "1");
+        await repository.FetchGainers(["GB"], "2");
+        await repository.FetchLosers(["US"], "1");
+    }
 
     private static async Task AssertCached<T>(Func<Task<T>> fetch)
     {
@@ -164,12 +177,20 @@ public class CachedMiscRepositoryTests
         Assert.Equal(JsonSerializer.Serialize(first), JsonSerializer.Serialize(second));
     }
 
-    private sealed class FakeRepository : IMiscRepository
+    private sealed class FakeRepository : ICronJobRepository
     {
         public static readonly DateTime Timestamp = new(2025, 1, 2, 3, 4, 5, DateTimeKind.Utc);
         public int Calls { get; private set; }
         public DateTime Date { get; set; } = Timestamp;
         public bool Fail { get; set; }
+        public bool FailSave { get; set; }
+        public int Saves { get; private set; }
+        public Task SaveAsync(MarketSnapshot snapshot, CancellationToken cancellationToken = default)
+        {
+            if (FailSave) throw new InvalidOperationException("save failure");
+            Saves++;
+            return Task.CompletedTask;
+        }
 
         private Task<T> Result<T>(T value)
         {
@@ -188,21 +209,6 @@ public class CachedMiscRepositoryTests
         public Task<LosersDataDto> FetchLosers(IReadOnlyList<string> countries, string? period = null) => Result(new LosersDataDto([], Timestamp));
     }
 
-    private sealed class Cron : ICronJobRepository
-    {
-        public string? News { get; private set; }
-        public string? Indices { get; private set; }
-        public bool Fail { get; init; }
-        public Task SaveAsync(string? topNews, string? indexPerformance, CancellationToken cancellationToken = default)
-        {
-            if (Fail) throw new InvalidOperationException("save failure");
-            News = topNews;
-            Indices = indexPerformance;
-            return Task.CompletedTask;
-        }
-        public Task<string?> GetIndexPerformance(CancellationToken cancellationToken = default) => throw new NotSupportedException();
-        public Task<string?> GetTopNews(CancellationToken cancellationToken = default) => throw new NotSupportedException();
-    }
 
     private sealed class FakeCache : IDistributedCache
     {

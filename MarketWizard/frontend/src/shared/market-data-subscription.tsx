@@ -7,12 +7,20 @@ import { useEffect } from "react";
 const queryKeys: Record<string, string> = {
   indices: "indices",
   topNews: "top-news",
+  sectorPerformance: "sector-performance",
+  mapPerformance: "tree-maps",
+  topIndustries: "top-industries",
+  worstIndustries: "worst-industries",
+  topGainers: "top-gainers",
+  topLosers: "top-losers",
 };
 
 export function subscribeToMarketData(queryClient: QueryClient, url: string) {
   const refresh = (fields: string[]) => {
     for (const field of new Set(fields)) {
-      const key = queryKeys[field];
+      const key = Object.hasOwn(queryKeys, field)
+        ? queryKeys[field]
+        : undefined;
       if (key) void queryClient.invalidateQueries({ queryKey: [key] });
     }
   };

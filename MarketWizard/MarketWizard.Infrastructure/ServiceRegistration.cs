@@ -20,16 +20,14 @@ public static class ServiceRegistration
     {
         builder.AddNpgsqlDbContext<MarketWizardContext>("MarketWizard");
         builder.AddRedisDistributedCache("MarketWizardCache");
-        builder.Services.AddScoped<ICronJobRepository, CronJobRepository>();
+        builder.Services.AddScoped<CronJobRepository>();
+        builder.Services.AddScoped<ICronJobRepository>(services => new CachedCronJobRepository(
+            services.GetRequiredService<CronJobRepository>(),
+            services.GetRequiredService<Microsoft.Extensions.Caching.Distributed.IDistributedCache>(),
+            services.GetRequiredService<Microsoft.Extensions.Logging.ILogger<CachedCronJobRepository>>()));
         
         builder.Services.AddSingleton<IMapPerformanceBuilder, MapPerformanceBuilder>();
-        builder.Services.AddSingleton<MiscRepository>();
-        builder.Services.AddSingleton<CachedMiscRepository>(services => new CachedMiscRepository(
-            services.GetRequiredService<MiscRepository>(),
-            services.GetRequiredService<Microsoft.Extensions.Caching.Distributed.IDistributedCache>(),
-            services.GetRequiredService<Microsoft.Extensions.Logging.ILogger<CachedMiscRepository>>()));
-        builder.Services.AddSingleton<IMiscRepository>(services => services.GetRequiredService<CachedMiscRepository>());
-        builder.Services.AddSingleton<IMarketSyncRepository>(services => services.GetRequiredService<CachedMiscRepository>());
+        builder.Services.AddSingleton<IMiscRepository, MiscRepository>();
         builder.Services.AddSingleton<IPortfolioRepository, PortfolioRepository>();
         builder.Services.AddSingleton<IEtfRepository, EtfRepository>();
 

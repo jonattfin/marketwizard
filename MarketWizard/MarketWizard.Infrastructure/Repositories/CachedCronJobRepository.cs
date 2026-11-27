@@ -8,11 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace MarketWizard.Infrastructure.Repositories;
 
-public sealed class CachedMiscRepository(
-    IMiscRepository inner,
+public sealed class CachedCronJobRepository(
+    ICronJobRepository inner,
     IDistributedCache cache,
-    ILogger<CachedMiscRepository> logger) : IMiscRepository, IMarketSyncRepository
+    ILogger<CachedCronJobRepository> logger) : ICronJobRepository
 {
+    private const string VersionKey = "cronjob:v1:version";
     private static readonly DistributedCacheEntryOptions CacheOptions = new()
     {
         AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
@@ -24,14 +25,25 @@ public sealed class CachedMiscRepository(
     public Task<IndicePerformanceDataDto> FetchIndicesPerformance() =>
         GetOrFetch(nameof(FetchIndicesPerformance), [], inner.FetchIndicesPerformance);
 
-    public Task<TopNewsDataDto> FetchFreshTopNews() => inner.FetchTopNews();
-
-    public Task<IndicePerformanceDataDto> FetchFreshIndicesPerformance() => inner.FetchIndicesPerformance();
-
-    public async Task UpdateCache(TopNewsDataDto topNews, IndicePerformanceDataDto indicesPerformance, CancellationToken cancellationToken)
+    public async Task SaveAsync(MarketSnapshot snapshot, CancellationToken cancellationToken = default)
     {
-        await WriteCache(nameof(FetchTopNews), [null], topNews, cancellationToken);
-        await WriteCache(nameof(FetchIndicesPerformance), [], indicesPerformance, cancellationToken);
+        await inner.SaveAsync(snapshot, cancellationToken);
+        try
+        {
+            await cache.SetStringAsync(VersionKey, Guid.NewGuid().ToString(), CancellationToken.None);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogWarning(ex, "Failed to update cache version");
+            try
+            {
+                await cache.RemoveAsync(VersionKey, CancellationToken.None);
+            }
+            catch (Exception removeException) when (removeException is not OperationCanceledException)
+            {
+                logger.LogWarning(removeException, "Failed to invalidate cache version");
+            }
+        }
     }
 
     public Task<SectorPerformanceDataDto> FetchSectorPerformance(IReadOnlyList<string> countries) =>
@@ -54,13 +66,17 @@ public sealed class CachedMiscRepository(
 
     private async Task<T> GetOrFetch<T>(string method, object?[] arguments, Func<Task<T>> fetch)
     {
-        var key = CacheKey(method, arguments);
-
+        string? key = null;
         try
         {
-            var cached = await cache.GetStringAsync(key);
-            if (cached is not null && JsonSerializer.Deserialize<T>(cached) is { } value)
-                return value;
+            var version = await cache.GetStringAsync(VersionKey);
+            if (version is not null)
+            {
+                key = CacheKey(version, method, arguments);
+                var cached = await cache.GetStringAsync(key);
+                if (cached is not null && JsonSerializer.Deserialize<T>(cached) is { } value)
+                    return value;
+            }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -68,19 +84,19 @@ public sealed class CachedMiscRepository(
         }
 
         var result = await fetch();
-        await WriteCache(method, arguments, result, CancellationToken.None);
+        if (key is not null)
+            await WriteCache(key, method, result, CancellationToken.None);
         return result;
     }
 
-    private static string CacheKey(string method, object?[] arguments)
+    private static string CacheKey(string version, string method, object?[] arguments)
     {
         var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(arguments))));
-        return $"misc:v1:{method}:{hash}";
+        return $"cronjob:v1:{version}:{method}:{hash}";
     }
 
-    private async Task WriteCache<T>(string method, object?[] arguments, T result, CancellationToken cancellationToken)
+    private async Task WriteCache<T>(string key, string method, T result, CancellationToken cancellationToken)
     {
-        var key = CacheKey(method, arguments);
         try
         {
             await cache.SetStringAsync(key, JsonSerializer.Serialize(result), CacheOptions, cancellationToken);

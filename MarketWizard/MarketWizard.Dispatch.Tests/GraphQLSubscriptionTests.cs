@@ -47,7 +47,8 @@ public class GraphQLSubscriptionTests
         Assert.Equal("next", message.GetProperty("type").GetString());
         var update = message.GetProperty("payload").GetProperty("data").GetProperty("marketDataUpdated");
         Assert.Equal(timestamp, update.GetProperty("updatedAt").GetDateTime());
-        Assert.Equal(new[] { "indices", "topNews" }, update.GetProperty("fields").EnumerateArray().Select(x => x.GetString()));
+        Assert.Equal(new[] { "indices", "topNews", "sectorPerformance", "mapPerformance", "topIndustries", "worstIndustries", "topGainers", "topLosers" },
+            update.GetProperty("fields").EnumerateArray().Select(x => x.GetString()));
     }
 
     private static Task Send(WebSocket socket, string message, CancellationToken token) =>

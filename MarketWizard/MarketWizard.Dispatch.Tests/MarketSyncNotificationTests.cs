@@ -26,7 +26,7 @@ public class MarketSyncNotificationTests
                 services.AddScheduler();
                 services.AddTransient<MarketSyncJob>();
                 services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(MarketSyncNotification).Assembly));
-                services.AddScoped<IMarketSyncRepository, Misc>();
+                services.AddScoped<IMiscRepository, Misc>();
                 services.AddScoped<ICronJobRepository>(_ => new Cron(saved));
             })
             .UseDefaultServiceProvider(options => options.ValidateScopes = true)
@@ -51,7 +51,7 @@ public class MarketSyncNotificationTests
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(MarketSyncNotification).Assembly));
-        services.AddSingleton<IMarketSyncRepository>(misc);
+        services.AddSingleton<IMiscRepository>(misc);
         services.AddSingleton<ICronJobRepository>(cron);
         await using var provider = services.BuildServiceProvider();
         var worker = new MarketSyncJob(provider.GetRequiredService<IPublisher>(), NullLogger<MarketSyncJob>.Instance);
@@ -60,10 +60,11 @@ public class MarketSyncNotificationTests
 
         await worker.Invoke();
 
-        Assert.Equal(1, misc.NewsCalls);
+        Assert.Equal(10, misc.NewsCalls);
         Assert.Equal(1, misc.IndicesCalls);
-        Assert.Equal(JsonSerializer.Serialize(misc.News), cron.News);
-        Assert.Equal(JsonSerializer.Serialize(misc.Indices), cron.Indices);
+        Assert.Equal(misc.Indices, cron.Snapshot!.IndicesPerformance);
+        Assert.Equal(5, cron.Snapshot.TopIndustries.Count);
+        Assert.Equal(50, misc.PeriodCalls);
         Assert.Equal(cancellation.Token, cron.Token);
         Assert.Equal(1, cron.Saves);
     }
@@ -79,7 +80,7 @@ public class MarketSyncNotificationTests
         await handler.Handle(new MarketSyncNotification(), CancellationToken.None);
 
         Assert.Equal(1, cron.Saves);
-        Assert.True(misc.CacheUpdated);
+        Assert.NotNull(cron.Snapshot);
         Assert.IsType<MarketDataUpdatedNotification>(Assert.Single(((RecordingPublisher)publisher).Notifications));
     }
 
@@ -91,7 +92,6 @@ public class MarketSyncNotificationTests
         var handler = new MarketSyncNotificationHandler(misc, new Cron { Fail = true }, publisher);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Handle(new MarketSyncNotification(), CancellationToken.None));
-        Assert.False(misc.CacheUpdated);
         Assert.Empty(((RecordingPublisher)publisher).Notifications);
     }
 
@@ -111,40 +111,37 @@ public class MarketSyncNotificationTests
 
     private sealed class Cron(TaskCompletionSource? saved = null) : ICronJobRepository
     {
-        public string? News { get; private set; }
-        public string? Indices { get; private set; }
+        public MarketSnapshot? Snapshot { get; private set; }
         public CancellationToken Token { get; private set; }
         public int Saves { get; private set; }
         public bool Fail { get; init; }
-        public Task SaveAsync(string? topNews, string? indexPerformance, CancellationToken cancellationToken = default)
+        public Task SaveAsync(MarketSnapshot snapshot, CancellationToken cancellationToken = default)
         {
             if (Fail) throw new InvalidOperationException();
-            News = topNews;
-            Indices = indexPerformance;
+            Snapshot = snapshot;
             Token = cancellationToken;
             Saves++;
             saved?.TrySetResult();
             return Task.CompletedTask;
         }
-        public Task<string?> GetIndexPerformance(CancellationToken cancellationToken = default) => throw new NotSupportedException();
-        public Task<string?> GetTopNews(CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public Task<TopNewsDataDto> FetchTopNews(IReadOnlyList<string>? countries = null) => throw new NotSupportedException();
+        public Task<IndicePerformanceDataDto> FetchIndicesPerformance() => throw new NotSupportedException();
+        public Task<SectorPerformanceDataDto> FetchSectorPerformance(IReadOnlyList<string> countries) => throw new NotSupportedException();
+        public Task<IReadOnlyList<TreeMapDto>> FetchMapPerformance() => throw new NotSupportedException();
+        public Task<TopIndustriesDataDto> FetchTopIndustries(IReadOnlyList<string> countries, string period) => throw new NotSupportedException();
+        public Task<WorstIndustriesDataDto> FetchWorstIndustries(IReadOnlyList<string> countries, string period) => throw new NotSupportedException();
+        public Task<GainersDataDto> FetchGainers(IReadOnlyList<string> countries, string? period = null) => throw new NotSupportedException();
+        public Task<LosersDataDto> FetchLosers(IReadOnlyList<string> countries, string? period = null) => throw new NotSupportedException();
     }
 
-    private sealed class Misc : IMiscRepository, IMarketSyncRepository
+    private sealed class Misc : IMiscRepository
     {
         public TopNewsDataDto News { get; } = new([], new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         public IndicePerformanceDataDto Indices { get; } = new([], new DateTime(2025, 1, 2, 0, 0, 0, DateTimeKind.Utc));
         public int NewsCalls { get; private set; }
         public int IndicesCalls { get; private set; }
         public bool Fail { get; init; }
-        public bool CacheUpdated { get; private set; }
-        public Task<TopNewsDataDto> FetchFreshTopNews() => FetchTopNews();
-        public Task<IndicePerformanceDataDto> FetchFreshIndicesPerformance() => FetchIndicesPerformance();
-        public Task UpdateCache(TopNewsDataDto topNews, IndicePerformanceDataDto indicesPerformance, CancellationToken cancellationToken)
-        {
-            CacheUpdated = true;
-            return Task.CompletedTask;
-        }
+        public int PeriodCalls { get; private set; }
         public Task<TopNewsDataDto> FetchTopNews(IReadOnlyList<string>? countries = null)
         {
             NewsCalls++;
@@ -152,12 +149,12 @@ public class MarketSyncNotificationTests
             return Task.FromResult(News);
         }
         public Task<IndicePerformanceDataDto> FetchIndicesPerformance() { IndicesCalls++; return Task.FromResult(Indices); }
-        public Task<SectorPerformanceDataDto> FetchSectorPerformance(IReadOnlyList<string> countries) => throw new NotSupportedException();
-        public Task<IReadOnlyList<TreeMapDto>> FetchMapPerformance() => throw new NotSupportedException();
-        public Task<TopIndustriesDataDto> FetchTopIndustries(IReadOnlyList<string> countries, string period) => throw new NotSupportedException();
-        public Task<WorstIndustriesDataDto> FetchWorstIndustries(IReadOnlyList<string> countries, string period) => throw new NotSupportedException();
-        public Task<GainersDataDto> FetchGainers(IReadOnlyList<string> countries, string? period = null) => throw new NotSupportedException();
-        public Task<LosersDataDto> FetchLosers(IReadOnlyList<string> countries, string? period = null) => throw new NotSupportedException();
+        public Task<SectorPerformanceDataDto> FetchSectorPerformance(IReadOnlyList<string> countries) => Task.FromResult(new SectorPerformanceDataDto([]));
+        public Task<IReadOnlyList<TreeMapDto>> FetchMapPerformance() => Task.FromResult<IReadOnlyList<TreeMapDto>>([]);
+        public Task<TopIndustriesDataDto> FetchTopIndustries(IReadOnlyList<string> countries, string period) { PeriodCalls++; return Task.FromResult(new TopIndustriesDataDto([])); }
+        public Task<WorstIndustriesDataDto> FetchWorstIndustries(IReadOnlyList<string> countries, string period) => Task.FromResult(new WorstIndustriesDataDto([]));
+        public Task<GainersDataDto> FetchGainers(IReadOnlyList<string> countries, string? period = null) => Task.FromResult(new GainersDataDto([]));
+        public Task<LosersDataDto> FetchLosers(IReadOnlyList<string> countries, string? period = null) => Task.FromResult(new LosersDataDto([]));
     }
 }
 

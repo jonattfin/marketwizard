@@ -17,47 +17,42 @@ public record GetLazyPortfolioByIdQuery(int Id) : IRequest<LazyPortfolioDto?>;
 public record GetEtfsQuery : IRequest<IReadOnlyList<EtfThemeDto>>;
 public record GetEtfByIdQuery(string Id) : IRequest<EtfThemeByIdDto?>;
 
-public class GetIndicesHandler(IMiscRepository repository) : IRequestHandler<GetIndicesQuery, IndicePerformanceDataDto>
+public class GetIndicesHandler(ICronJobRepository repository) : IRequestHandler<GetIndicesQuery, IndicePerformanceDataDto>
 {
     public Task<IndicePerformanceDataDto> Handle(GetIndicesQuery request, CancellationToken cancellationToken) => repository.FetchIndicesPerformance();
 }
 
-public class GetTopNewsHandler(IMiscRepository repository, ICronJobRepository cronJobRepository) : IRequestHandler<GetTopNewsQuery, TopNewsDataDto>
+public class GetTopNewsHandler(ICronJobRepository repository) : IRequestHandler<GetTopNewsQuery, TopNewsDataDto>
 {
-    public async Task<TopNewsDataDto> Handle(GetTopNewsQuery request, CancellationToken cancellationToken)
-    {
-        var topNews = await repository.FetchTopNews(request.Countries);
-        await cronJobRepository.GetTopNews(cancellationToken);
-        return topNews;
-    }
+    public Task<TopNewsDataDto> Handle(GetTopNewsQuery request, CancellationToken cancellationToken) => repository.FetchTopNews(request.Countries);
 }
 
-public class GetGainersHandler(IMiscRepository repository) : IRequestHandler<GetGainersQuery, GainersDataDto>
+public class GetGainersHandler(ICronJobRepository repository) : IRequestHandler<GetGainersQuery, GainersDataDto>
 {
     public Task<GainersDataDto> Handle(GetGainersQuery request, CancellationToken cancellationToken) => repository.FetchGainers(request.Countries, request.Period);
 }
 
-public class GetLosersHandler(IMiscRepository repository) : IRequestHandler<GetLosersQuery, LosersDataDto>
+public class GetLosersHandler(ICronJobRepository repository) : IRequestHandler<GetLosersQuery, LosersDataDto>
 {
     public Task<LosersDataDto> Handle(GetLosersQuery request, CancellationToken cancellationToken) => repository.FetchLosers(request.Countries, request.Period);
 }
 
-public class GetTopIndustriesHandler(IMiscRepository repository) : IRequestHandler<GetTopIndustriesQuery, TopIndustriesDataDto>
+public class GetTopIndustriesHandler(ICronJobRepository repository) : IRequestHandler<GetTopIndustriesQuery, TopIndustriesDataDto>
 {
     public Task<TopIndustriesDataDto> Handle(GetTopIndustriesQuery request, CancellationToken cancellationToken) => repository.FetchTopIndustries(request.Countries, request.Period);
 }
 
-public class GetWorstIndustriesHandler(IMiscRepository repository) : IRequestHandler<GetWorstIndustriesQuery, WorstIndustriesDataDto>
+public class GetWorstIndustriesHandler(ICronJobRepository repository) : IRequestHandler<GetWorstIndustriesQuery, WorstIndustriesDataDto>
 {
     public Task<WorstIndustriesDataDto> Handle(GetWorstIndustriesQuery request, CancellationToken cancellationToken) => repository.FetchWorstIndustries(request.Countries, request.Period);
 }
 
-public class GetSectorPerformanceHandler(IMiscRepository repository) : IRequestHandler<GetSectorPerformanceQuery, SectorPerformanceDataDto>
+public class GetSectorPerformanceHandler(ICronJobRepository repository) : IRequestHandler<GetSectorPerformanceQuery, SectorPerformanceDataDto>
 {
     public Task<SectorPerformanceDataDto> Handle(GetSectorPerformanceQuery request, CancellationToken cancellationToken) => repository.FetchSectorPerformance(request.Countries);
 }
 
-public class GetMapPerformanceHandler(IMiscRepository repository) : IRequestHandler<GetMapPerformanceQuery, IReadOnlyList<TreeMapDto>>
+public class GetMapPerformanceHandler(ICronJobRepository repository) : IRequestHandler<GetMapPerformanceQuery, IReadOnlyList<TreeMapDto>>
 {
     public Task<IReadOnlyList<TreeMapDto>> Handle(GetMapPerformanceQuery request, CancellationToken cancellationToken) => repository.FetchMapPerformance();
 }

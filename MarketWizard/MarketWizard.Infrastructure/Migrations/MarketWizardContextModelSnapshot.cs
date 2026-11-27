@@ -40,6 +40,9 @@ namespace MarketWizard.Infrastructure.Migrations
                     b.Property<string>("Losers")
                         .HasColumnType("text");
 
+                    b.Property<string>("MapPerformance")
+                        .HasColumnType("text");
+
                     b.Property<string>("SectorPerformance")
                         .HasColumnType("text");
 
